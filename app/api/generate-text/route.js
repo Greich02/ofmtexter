@@ -18,7 +18,7 @@ export async function POST(req) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer API_Key"
+      "Authorization": `Bearer ${process.env.XAI_API_KEY}`
     },
     body: JSON.stringify({
       model: "grok-3-mini",
