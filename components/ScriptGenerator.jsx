@@ -42,11 +42,10 @@ export default function ScriptGenerator() {
   // const [steps, setSteps] = useState(3); // supprimé
   const [currentStep, setCurrentStep] = useState(1);
   const [historique, setHistorique] = useState([]); // [{modele:..., abonne:...}]
-  // ...existing code...
+  const [modeleMsg, setModeleMsg] = useState("");
   const [abonneMsg, setAbonneMsg] = useState("");
   const [initialFanMsg, setInitialFanMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  // ...existing code...
   // Bouton clear pour réinitialiser tout le workflow
   const handleClear = () => {
     setCurrentStep(1);
@@ -172,7 +171,7 @@ export default function ScriptGenerator() {
             </>
           )}
         </div>
-          {historique.length > 0 && !historique[historique.length - 1]?.modele && (
+          {historique.length > 0 && historique[historique.length - 1]?.modele && (
             <div className="mb-8">
               <label className="block text-gray-300 mb-2">Réponse de l'abonné</label>
               <textarea className="w-full p-3 rounded bg-[#232346] text-gray-200 mb-4" rows={2} value={abonneMsg} onChange={e => setAbonneMsg(e.target.value)} placeholder="Entrez la réponse de l'abonné ici..." />
@@ -196,9 +195,21 @@ export default function ScriptGenerator() {
                   />
                 </div>
               )}
-              <button className="w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition" onClick={handleNextStep} disabled={!abonneMsg || isLoading}>
-                {isLoading ? "Génération..." : "Envoyer"}
-              </button>
+              <div className="w-full flex items-center">
+                <button
+                  className={`w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition${!abonneMsg ? ' opacity-60 cursor-not-allowed' : ''}`}
+                  onClick={handleNextStep}
+                  disabled={!abonneMsg}
+                  style={{ pointerEvents: isLoading ? 'none' : 'auto' }}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center justify-center w-full">
+                      <span>Génération</span>
+                      <span className="ml-2 text-blue-200 animate-pulse text-xl" aria-label="Génération en cours">…</span>
+                    </span>
+                  ) : 'Envoyer'}
+                </button>
+              </div>
             </div>
           )}
           {copiableMsg && copiableMsg.trim() !== '' && (
