@@ -1,3 +1,25 @@
+# ofmtexter
+
+Ce projet est une application Next.js créée avec JavaScript.
+
+## Démarrage
+
+Pour lancer le serveur de développement :
+
+```powershell
+npm run dev
+```
+
+Ouvrez ensuite http://localhost:3000 dans votre navigateur pour voir l'application.
+
+## Structure
+- Utilise React et Next.js
+- Configuration Tailwind CSS
+- App Router activé
+
+## Personnalisation
+Modifiez le contenu dans le dossier `src` pour adapter l'application à vos besoins.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
