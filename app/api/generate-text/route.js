@@ -18,7 +18,7 @@ export async function POST(req) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer xai-Gqx0CptF0OW4og1UnsaksTP7ZwkUqVUuyx52i61k2hQOoMfQ0sAsi3xqOpMzjzahoQJWkOxKOtW0gmxJ"
+      "Authorization": "Bearer API_Key"
     },
     body: JSON.stringify({
       model: "grok-3-mini",
