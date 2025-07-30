@@ -1,26 +1,54 @@
+import GoogleProvider from "next-auth/providers/google";
 import dbConnect from "@/lib/mongoose";
 import User from "@/models/User";
-import Plan from "@/models/Plan";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
 
-export async function GET(req) {
-  // Récupère l'utilisateur courant via la session NextAuth
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user?.email) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  await dbConnect();
-  const user = await User.findOne({ email: session.user.email }).populate("plan");
-  if (!user) return Response.json({ error: "Not found" }, { status: 404 });
-  // On ne retourne que les infos utiles
-  return Response.json({
-    email: user.email,
-    credits: user.credits,
-    plan: user.plan ? {
-      name: user.plan.name,
-      access: user.plan.access,
-      _id: user.plan._id
-    } : null
-  });
-}
+export const authOptions = {
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    })
+  ],
+  callbacks: {
+    async signIn({ user, account, profile }) {
+      await dbConnect();
+      const existingUser = await User.findOne({ googleId: profile.sub });
+      if (!existingUser) {
+        try {
+          await User.create({
+            googleId: profile.sub,
+            email: profile.email,
+            name: profile.name,
+            avatar: profile.picture,
+          });
+        } catch (err) {
+          // Ignore duplicate key error
+          if (err.code !== 11000) throw err;
+        }
+      }
+      return true;
+    },
+    async session({ session, token, user }) {
+      await dbConnect();
+      const dbUser = await User.findOne({ email: session.user.email });
+      if (dbUser) {
+        session.user.id = dbUser._id;
+        session.user.role = dbUser.role;
+        session.user.avatar = dbUser.avatar;
+        session.user.credits = dbUser.credits;
+        session.user.plan = dbUser.plan;
+        session.user.exists = true;
+        // Ajoute les accès du plan si disponible
+        if (dbUser.plan) {
+          const plan = await (await import("@/models/Plan")).default.findById(dbUser.plan);
+          session.user.planAccess = plan?.access || {};
+        } else {
+          session.user.planAccess = {};
+        }
+      } else {
+        session.user.exists = false;
+      }
+      return session;
+    },
+  },
+};
