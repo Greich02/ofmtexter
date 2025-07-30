@@ -1,13 +1,13 @@
 'use client'
 import DashboardLayout from "../../../components/DashboardLayout.jsx";
-import TextGenerator from "../../../components/TextGenerator.jsx";
+import MediaScriptGenerator from "../../../components/MediaScriptGenerator.jsx";
 import React, { useState } from "react";
 
-export default function TextGeneratorPage() {
+export default function MediaScriptGeneratorPage() {
   const [creditsLeft, setCreditsLeft] = useState(null);
   return (
     <DashboardLayout creditsLeft={creditsLeft}>
-      <TextGenerator setCreditsLeft={setCreditsLeft} />
+      <MediaScriptGenerator setCreditsLeft={setCreditsLeft} />
     </DashboardLayout>
   );
 }

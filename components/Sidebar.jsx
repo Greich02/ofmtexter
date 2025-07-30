@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 const menu = [
   { icon: "🧠", label: "Formuler des Textes", slug: "dashboard/textgenerator" },
   { icon: "📜", label: "Génrérer des scripts ciblés", slug: "dashboard/scriptgenerator" },
-  { icon: "🎬", label: "Script pour médias", slug: "dashboard/mediascript" },
+  { icon: "🎬", label: "Script pour médias", slug: "dashboard/mediascriptgenerator" },
   { icon: "👥", label: "Gérer mon équipe", slug: "dashboard/equipe" },
 
 ];

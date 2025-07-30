@@ -8,7 +8,7 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+    })
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
@@ -36,7 +36,16 @@ export const authOptions = {
         session.user.id = dbUser._id;
         session.user.role = dbUser.role;
         session.user.avatar = dbUser.avatar;
+        session.user.credits = dbUser.credits;
+        session.user.plan = dbUser.plan;
         session.user.exists = true;
+        // Ajoute les accès du plan si disponible
+        if (dbUser.plan) {
+          const plan = await (await import("@/models/Plan")).default.findById(dbUser.plan);
+          session.user.planAccess = plan?.access || {};
+        } else {
+          session.user.planAccess = {};
+        }
       } else {
         session.user.exists = false;
       }

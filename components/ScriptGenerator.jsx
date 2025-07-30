@@ -1,9 +1,28 @@
 import React, { useState } from "react";
 import objectiveInstructions from "../lib/objectiveInstructions";
 import toneInstructions from "../lib/toneInstructions";
+import useUserSession from "./useUserSession";
 
 
-export default function ScriptGenerator() {
+export default function ScriptGenerator({ setCreditsLeft }) {
+  const { user, loading } = useUserSession();
+  const hasProScript = user?.planAccess?.proScript;
+  const credits = typeof user?.credits === "number" ? user.credits : 0;
+  const [creditsLeftState, setCreditsLeftState] = useState(credits);
+  // Synchronise creditsLeftState avec user.credits à chaque changement de session
+  React.useEffect(() => {
+    setCreditsLeftState(credits);
+  }, [credits]);
+  // Synchronise creditsLeftState avec Topbar à chaque changement
+  React.useEffect(() => {
+    if (typeof creditsLeftState === "number" && setCreditsLeft) {
+      setCreditsLeft(creditsLeftState);
+    }
+  }, [creditsLeftState, setCreditsLeft]);
+  const canGenerate = hasProScript && creditsLeftState > 0;
+  // Log pour debug accès et droits
+  //console.log("[ScriptGenerator] hasProScript:", hasProScript, "creditsLeft:", creditsLeftState, "canGenerate:", canGenerate, "user:", user, "credits: ", credits);
+
   // Champ nom/pseudo
   const [pseudo, setPseudo] = useState("");
   // Aide contextuelle pour chaque section
@@ -87,6 +106,10 @@ export default function ScriptGenerator() {
       const reply = data.reponse || "";
       setHistorique([...hist.slice(0, -1), { ...hist[hist.length - 1], modele: reply }]);
       setCopiableMsg(reply);
+      // Met à jour les crédits restants si présents dans la réponse
+      if (typeof data.creditsLeft === "number") {
+        setCreditsLeft(data.creditsLeft);
+      }
     } catch (err) {
       setHistorique([...hist.slice(0, -1), { ...hist[hist.length - 1], modele: "Erreur lors de la génération." }]);
       setCopiableMsg("Erreur lors de la génération.");
@@ -162,7 +185,19 @@ export default function ScriptGenerator() {
                   const hist = [{ modele: "", abonne: initialFanMsg }];
                   setHistorique(hist);
                   setInitialFanMsg("");
+                  // Génère et facture le premier message
                   await generateAndAddModelReply(hist);
+                  // Déduire les crédits après génération
+                  if (typeof user?.credits === "number") {
+                    // On suppose que l'API retourne le nombre de crédits restants
+                    try {
+                      const res = await fetch("/api/get-credits", { method: "GET" });
+                      const data = await res.json();
+                      setCreditsLeft(data.creditsLeft);
+                    } catch (err) {
+                      console.error("[ScriptGenerator] Erreur récupération crédits:", err);
+                    }
+                  }
                   setCurrentStep(2);
                 }
               }} disabled={isLoading || !initialFanMsg}>
@@ -196,19 +231,28 @@ export default function ScriptGenerator() {
                 </div>
               )}
               <div className="w-full flex items-center">
-                <button
-                  className={`w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition${!abonneMsg ? ' opacity-60 cursor-not-allowed' : ''}`}
-                  onClick={handleNextStep}
-                  disabled={!abonneMsg}
-                  style={{ pointerEvents: isLoading ? 'none' : 'auto' }}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center justify-center w-full">
-                      <span>Génération</span>
-                      <span className="ml-2 text-blue-200 animate-pulse text-xl" aria-label="Génération en cours">…</span>
-                    </span>
-                  ) : 'Envoyer'}
-                </button>
+                {(!canGenerate || creditsLeftState <= 0) ? (
+                  <button className="w-full px-4 py-2 rounded bg-yellow-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-yellow-600 transition" onClick={() => window.location.href = "/pricing"} disabled={isLoading || loading}>
+                    {creditsLeftState === 0 ? "Plus de crédits - Mettre à niveau" : "Mise à niveau (accès réservé)"}
+                  </button>
+                ) : (
+                  <button
+                    className={`w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition${!abonneMsg ? ' opacity-60 cursor-not-allowed' : ''}`}
+                    onClick={handleNextStep}
+                    disabled={isLoading || !abonneMsg || !canGenerate}
+                    style={{ pointerEvents: isLoading ? 'none' : 'auto' }}
+                  >
+                    {isLoading ? (
+                      <span className="flex items-center justify-center w-full">
+                        <span>Génération</span>
+                        <span className="ml-2 text-blue-200 animate-pulse text-xl" aria-label="Génération en cours">…</span>
+                      </span>
+                    ) : 'Envoyer'}
+                  </button>
+                )}
+                {typeof creditsLeft === "number" && (
+                  <span className="ml-4 text-blue-300 font-bold">Crédits restants : {creditsLeftState}</span>
+                )}
               </div>
             </div>
           )}

@@ -1,40 +1,5 @@
 // c:\Users\Utilisateur\Desktop\ofmtexter\components\Pricing.jsx
-import React, { useState } from "react";
-
-const plans = [
-  {
-    name: "Gratuit",
-    price: 0,
-    priceYear: 0,
-    credits: 100,
-    features: ["~10 générations", "Pas d'accès équipe", "Pas de script Médias"],
-    highlight: false,
-  },
-  {
-    name: "Solo",
-    price: 5,
-    priceYear: 48,
-    credits: 5000,
-    features: ["~500 générations", "Usage individuel", "Pas de script"],
-    highlight: false,
-  },
-  {
-    name: "Pro",
-    price: 10,
-    priceYear: 96,
-    credits: 12000,
-    features: ["~1200 générations", "Accès génération de scripts", "Usage individuel"],
-    highlight: true,
-  },
-  {
-    name: "Agence",
-    price: 25,
-    priceYear: 240,
-    credits: 35000,
-    features: ["~3500 générations", "Accès équipe (5 membres inclus)", "Scripts illimités"],
-    highlight: false,
-  }
-];
+import React, { useState, useEffect } from "react";
 
 const allFeatures = [
   "Générations incluses/mois",
@@ -53,6 +18,12 @@ const planFeatures = {
 
 export default function Pricing({ isLoggedIn }) {
   const [annual, setAnnual] = useState(true);
+  const [plans, setPlans] = useState([]);
+  useEffect(() => {
+    fetch("/api/plans")
+      .then(res => res.json())
+      .then(data => setPlans(data.plans || []));
+  }, []);
 
   return (
     <section id="pricing" className="w-full py-12 px-2 md:px-8 bg-gradient-to-br from-[#181828] via-[#232346] to-[#181828]">
@@ -106,7 +77,7 @@ export default function Pricing({ isLoggedIn }) {
                       window.localStorage.setItem('selectedPlan', plan.name);
                       window.location.href = '/signup';
                     } else {
-                      window.location.href = '/dashboard/buycredits';
+                      window.location.href = '/dashboard/preview';
                     }
                   }
                 }}

@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from "react";
+import useUserSession from "./useUserSession";
 // Placeholders dynamiques pour chaque type d'étape
 const stepDescriptionPlaceholders = {
   "Chauffe": "Ex: Décris une scène ou une ambiance excitante liée au média à venir (ex : 'je suis nue sous la douche, j’ai pensé à toi…'), ou à la précédente phrase de sexualisation. Donne des détails sensoriels pour nourrir l’imaginaire.",
@@ -17,8 +18,18 @@ const stepTypes = [
   "Fidélisation post script"
 ];
 
-export default function MediaScriptGenerator() {
-  // Aide contextuelle au hover
+export default function MediaScriptGenerator({ setCreditsLeft }) {
+
+  const { user, loading } = useUserSession();
+  const hasMediaScript = user?.planAccess?.mediaScript;
+  const credits = typeof user?.credits === "number" ? user.credits : null;
+  const canGenerate = hasMediaScript && credits > 0;
+  const [creditsLeftState, setCreditsLeftState] = useState(credits);
+  React.useEffect(() => {
+    if (typeof creditsLeftState === "number" && setCreditsLeft) {
+      setCreditsLeft(creditsLeftState);
+    }
+  }, [creditsLeftState, setCreditsLeft]);
   const helpTexts = {
     main: `Crée un script média étape par étape. Ajoute des étapes, précise leur type et description, puis génère le script. Chaque étape correspond à une action ou un message à envoyer.`,
   };
@@ -27,7 +38,6 @@ export default function MediaScriptGenerator() {
     { name: "", type: stepTypes[0], desc: "" }
   ]);
   const [generated, setGenerated] = useState([]);
-
   const handleStepChange = (idx, field, value) => {
     const updated = steps.map((step, i) =>
       i === idx ? { ...step, [field]: value } : step
@@ -56,13 +66,19 @@ export default function MediaScriptGenerator() {
       });
       const data = await res.json();
       setGenerated(data.results || []);
+
       if (data.results && data.results.length > 0) {
         setCurrentStepIdx(0);
         setCopiableMsg(data.results[0].content);
       }
+      if (typeof data.creditsLeft === "number") setCreditsLeftState(data.creditsLeft);
+  // Synchronise creditsLeftState avec Topbar à chaque changement
+  React.useEffect(() => {
+    if (typeof creditsLeftState === "number" && setCreditsLeft) {
+      setCreditsLeft(creditsLeftState);
+    }
+  }, [creditsLeftState, setCreditsLeft]);
     } catch (err) {
-      setGenerated([]);
-      setCopiableMsg("Erreur lors de la génération.");
     }
     setIsLoading(false);
   };
@@ -112,11 +128,18 @@ export default function MediaScriptGenerator() {
         ))}
         <button className="px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition" onClick={addStep}>+ Ajouter une étape</button>
       </div>
-      <button className="w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition mb-6" onClick={generateScript} disabled={isLoading}>Générer le script</button>
+      {(!canGenerate || creditsLeftState === 0) ? (
+        <button className="w-full px-4 py-2 rounded bg-yellow-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-yellow-600 transition" onClick={() => window.location.href = "/pricing"} disabled={isLoading || loading}>
+                    {creditsLeftState === 0 ? "Plus de crédits - Mettre à niveau" : "Mise à niveau (accès réservé)"}
+        </button>
+      ) : (
+        <button className="w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition mb-6" onClick={generateScript} disabled={isLoading || !canGenerate}>Générer le script</button>
+      )}
+
       {isLoading && (
         <div className="mb-6 text-blue-400 font-bold animate-pulse">Génération du script en cours...</div>
       )}
-      {generated.length > 0 && currentStepIdx !== null && (
+      {(generated.length > 0 || currentStepIdx !== null) && (
         <div className="mb-8">
           <h3 className="text-lg font-bold text-white mb-4">Étape générée : <span className="text-blue-400">{generated[currentStepIdx].stepName}</span></h3>
           <div className="flex items-center gap-2 mb-4">

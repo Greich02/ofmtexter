@@ -2,17 +2,19 @@
 import React from "react";
 import { useSession, signOut, SessionProvider } from "next-auth/react";
 
-const Topbar = ({ credits = 0, showDashboardButton }) => {
+const Topbar = ({ showDashboardButton, creditsLeft }) => {
   return (
     <SessionProvider>
-      <TopbarContent credits={credits} showDashboardButton={showDashboardButton} />
+      <TopbarContent showDashboardButton={showDashboardButton} creditsLeft={creditsLeft} />
     </SessionProvider>
   );
 };
 
-function TopbarContent({ credits = 0, showDashboardButton }) {
+function TopbarContent({ showDashboardButton, creditsLeft }) {
   const { data: session } = useSession();
   const user = session?.user;
+  // Si creditsLeft est passé en prop, on l'affiche, sinon on prend la valeur session
+  const credits = typeof creditsLeft === "number" ? creditsLeft : (typeof user?.credits === "number" ? user.credits : 0);
   return (
     <header className="fixed top-0 left-0 right-0 w-full h-16 bg-[#181828] flex items-center justify-between px-8 z-40 shadow-lg">
       <a href="/">
@@ -41,7 +43,7 @@ function TopbarContent({ credits = 0, showDashboardButton }) {
             </button>
           )}
         </div>
-        <a href="/dashboard/buycredits" className="px-3 py-1 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-sm">+ Ajouter des crédits</a>
+        <a href="/pricing" className="px-3 py-1 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-sm">Mettre à niveau</a>
         <button onClick={() => signOut({ callbackUrl: "/login" })} className="px-3 py-1 rounded bg-[#232346] text-gray-200 font-bold hover:text-red-400 transition text-sm">🚪 Se déconnecter</button>
       </div>
       {/*

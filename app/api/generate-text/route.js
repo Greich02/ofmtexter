@@ -1,7 +1,22 @@
 // Route API Next.js (App Router) pour générer du texte
+
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import dbConnect from "@/lib/mongoose";
+import User from "@/models/User";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function POST(req) {
+  await dbConnect();
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user.email) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+  const dbUser = await User.findOne({ email: session.user.email });
+  console.log("[GROK API][User trouvé]", dbUser);
+  if (!dbUser) {
+    return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 403 });
+  }
   const body = await req.json();
   // DEBUG : log du body reçu
   console.log("[GROK API][Body reçu]", body);
@@ -12,7 +27,7 @@ export async function POST(req) {
   const prompt = `Voici l'historique des échanges entre un fan et un modèle OnlyFans :\n${history}\n\nGénère ${count} réponses du modèle dans le ton '${tone}' et pour l'objectif '${objectif}'.${instructions && instructions.trim() ? `\nInformation importante à prendre en compte : ${instructions.trim()}` : ""}\n\nIMPORTANT : Ne donne aucune explication, aucun raisonnement, aucune analyse, aucune consigne. Ne mets rien dans le raisonnement. Quoi qu'il arrive donne uniquement les réponses, chacune sur une seule ligne, commence et termine par #, sans texte supplémentaire. Réponds uniquement par les variantes, rien d'autre. Et aussi, adapte toi à la langue des messages entrés.`;
 
   // DEBUG : log du prompt complet envoyé à l'API
-  console.log("[GROK API][Prompt envoyé]", prompt);
+  //console.log("[GROK API][Prompt envoyé]", prompt);
   // Appel Grok AI
   const grokRes = await fetch("https://api.x.ai/v1/chat/completions", {
     method: "POST",
@@ -33,10 +48,31 @@ export async function POST(req) {
   const data = await grokRes.json();
   // Log l'objet complet message dans choices pour debug
   const messageObj = data.choices?.[0]?.message;
-  console.log("Message complet Grok:", messageObj);
+  //console.log("Message complet Grok:", messageObj);
   // Log du nombre de tokens utilisés
+  let tokensUsed = 0;
   if (data.usage) {
-    console.log("Tokens utilisés:", data.usage.total_tokens, "(prompt:", data.usage.prompt_tokens, ", completion:", data.usage.completion_tokens, ")");
+    tokensUsed = data.usage.total_tokens || 0;
+    console.log("Tokens utilisés:", tokensUsed, "(prompt:", data.usage.prompt_tokens, ", completion:", data.usage.completion_tokens, ")");
+  }
+  // Déduction des crédits (1 crédit = 100 tokens, arrondi supérieur)
+  const creditsToDeduct = Math.ceil(tokensUsed / 100);
+  if (dbUser.credits < creditsToDeduct) {
+    console.log("[GROK API][Erreur] Crédits insuffisants", dbUser.credits, "<", creditsToDeduct);
+    return NextResponse.json({ error: "Crédits insuffisants" }, { status: 402 });
+  }
+  dbUser.credits -= creditsToDeduct;
+  console.log("[GROK API][Crédits après déduction]", dbUser.credits);
+  // Vérification des champs critiques avant sauvegarde
+  if (!dbUser.googleId) {
+    console.error("[GROK API][Erreur] googleId manquant sur l'utilisateur:", dbUser);
+    return NextResponse.json({ error: "Impossible de sauvegarder l'utilisateur: googleId manquant", user: dbUser }, { status: 500 });
+  }
+  try {
+    await dbUser.save();
+  } catch (err) {
+    console.error("[GROK API][Erreur save user]", err, dbUser);
+    return NextResponse.json({ error: "Erreur lors de la sauvegarde de l'utilisateur", details: err.message, user: dbUser }, { status: 500 });
   }
   let text = messageObj?.content || "";
   // Si content est vide, fallback sur reasoning_content
@@ -59,5 +95,5 @@ export async function POST(req) {
   if (results.length === 0 && text) {
     results = [{ variant: 1, text }];
   }
-  return NextResponse.json({ results });
+  return NextResponse.json({ results, creditsLeft: dbUser.credits });
 }

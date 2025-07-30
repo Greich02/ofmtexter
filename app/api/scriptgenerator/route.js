@@ -1,7 +1,20 @@
 // Cette route est dépréciée pour le script libre. Utilisez app/api/scriptstep/route.js pour la génération étape par étape.
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import dbConnect from "@/lib/mongoose";
+import User from "@/models/User";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function POST(req) {
+  await dbConnect();
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user.email) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+  const dbUser = await User.findOne({ email: session.user.email });
+  if (!dbUser) {
+    return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 403 });
+  }
   const body = await req.json();
   const { desc, result, steps } = body;
   // Prompt direct pour Grok
@@ -25,6 +38,19 @@ export async function POST(req) {
   });
   const data = await grokRes.json();
   const messageObj = data.choices?.[0]?.message;
+  // Log du nombre de tokens utilisés
+  let tokensUsed = 0;
+  if (data.usage) {
+    tokensUsed = data.usage.total_tokens || 0;
+    console.log("Tokens utilisés:", tokensUsed, "(prompt:", data.usage?.prompt_tokens, ", completion:", data.usage?.completion_tokens, ")");
+  }
+  // Déduction des crédits (1 crédit = 100 tokens, arrondi supérieur)
+  const creditsToDeduct = Math.ceil(tokensUsed / 100);
+  if (dbUser.credits < creditsToDeduct) {
+    return NextResponse.json({ error: "Crédits insuffisants" }, { status: 402 });
+  }
+  dbUser.credits -= creditsToDeduct;
+  await dbUser.save();
   let text = messageObj?.content || "";
   if (!text && messageObj?.reasoning_content) {
     text = messageObj.reasoning_content;
@@ -39,5 +65,5 @@ export async function POST(req) {
       content: contentParts.join('-').trim()
     };
   });
-  return NextResponse.json({ generated });
+  return NextResponse.json({ generated, creditsLeft: dbUser.credits });
 }

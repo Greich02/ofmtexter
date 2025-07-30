@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useUserSession from "./useUserSession";
 import { generateTextWithProvider } from "../lib/textProvider";
 import objectiveInstructions from "../lib/objectiveInstructions";
 import toneInstructions from "../lib/toneInstructions";
@@ -30,7 +31,19 @@ const objectifs = [
   "Conversion"
 ];
 
-export default function TextGenerator() {
+export default function TextGenerator({ setCreditsLeft }) {
+  const { user, loading } = useUserSession();
+  const hasProScript = user?.planAccess?.proScript;
+  const credits = typeof user?.credits === "number" ? user.credits : null;
+  const canGenerate = hasProScript && credits > 0;
+  const [creditsLeftState, setCreditsLeftState] = useState(credits);
+
+  // Synchronise creditsLeftState avec Topbar à chaque changement
+  React.useEffect(() => {
+    if (typeof creditsLeftState === "number" && setCreditsLeft) {
+      setCreditsLeft(creditsLeftState);
+    }
+  }, [creditsLeftState, setCreditsLeft]);
   // Aide contextuelle au hover
   const helpTexts = {
     main: `Génère plusieurs variantes de réponses pour un échange entre un fan et un modèle. Remplis les messages, choisis le ton, l'objectif, le nombre de variantes, et ajoute des instructions si besoin. Clique sur "Générer les réponses" pour obtenir des suggestions IA.`,
@@ -74,6 +87,10 @@ export default function TextGenerator() {
     try {
       const response = await generateTextWithProvider({ exchanges, tone, objectif, count, instructions: fullInstructions });
       setResults(response.results);
+      if (typeof response.creditsLeft === "number") {
+        setCreditsLeftState(response.creditsLeft);
+        if (setCreditsLeft) setCreditsLeft(response.creditsLeft);
+      }
     } catch (err) {
       setResults([{ variant: 1, text: "Erreur lors de la génération." }]);
     }
@@ -150,10 +167,19 @@ export default function TextGenerator() {
         </div>
       )}
       <div className="flex gap-4 mb-6">
-        <button className="px-6 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition" onClick={generateResponses} disabled={isLoading}>
-          {isLoading ? "Génération..." : "Générer les réponses"}
-        </button>
+        {(!canGenerate || creditsLeftState === 0) ? (
+          <button className="w-full px-4 py-2 rounded bg-yellow-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-yellow-600 transition" onClick={() => window.location.href = "/pricing"} disabled={isLoading || loading}>
+                    {creditsLeftState === 0 ? "Plus de crédits - Mettre à niveau" : "Mise à niveau (accès réservé)"}
+          </button>
+        ) : (
+          <button className="px-6 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition" onClick={generateResponses} disabled={isLoading || !canGenerate}>
+            {isLoading ? "Génération..." : "Générer les réponses"}
+          </button>
+        )}
         <button className="px-6 py-2 rounded bg-[#232346] text-gray-200 font-bold hover:text-red-400 transition" onClick={clearAll} disabled={isLoading}>Clear</button>
+        {typeof creditsLeftState === "number" && (
+          <span className="ml-4 text-blue-300 font-bold">Crédits restants : {creditsLeftState}</span>
+        )}
       </div>
       {results.length > 0 && (
         <div className="mt-8">

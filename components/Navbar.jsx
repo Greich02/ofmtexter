@@ -11,7 +11,7 @@ export default function Navbar() {
       </a>
       <ul className="flex gap-8 text-gray-200 font-medium">
         <li><a href="#features" className="hover:text-blue-400 transition">Fonctionnalités</a></li>
-        <li><a href="/tarifs" className="hover:text-blue-400 transition">Tarifs</a></li>
+        <li><a href="/pricing" className="hover:text-blue-400 transition">Tarifs</a></li>
         <li><a href="#about" className="hover:text-blue-400 transition">À propos</a></li>
         <li><a href="#resources" className="hover:text-blue-400 transition">Ressources</a></li>
       </ul>

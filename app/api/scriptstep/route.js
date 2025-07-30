@@ -2,6 +2,20 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
+  // Ajout soustraction crédits utilisateur
+  const { getServerSession } = require("next-auth");
+  const dbConnect = require("@/lib/mongoose").default;
+  const User = require("@/models/User").default;
+  const { authOptions } = require("../auth/[...nextauth]/route");
+  await dbConnect();
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user.email) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+  const dbUser = await User.findOne({ email: session.user.email });
+  if (!dbUser) {
+    return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 403 });
+  }
   const body = await req.json();
   const { objectif, historique, etape, totalEtapes, instructions, tone, pseudo } = body;
   // Prompt dynamique pour Grok
@@ -31,7 +45,7 @@ ${instructions && instructions.trim() ? `\nInformation importante à prendre en 
 Génère UNIQUEMENT la réplique du modèle${typeof etape !== 'undefined' ? ` pour l'étape ${etape}` : ""}, à la première personne, sans explication ni raisonnement, sans préambule. Réponds comme si tu étais le modèle, prêt à envoyer le message au fan.
 `;
   // DEBUG : log du prompt envoyé
-  console.log("[SCRIPTSTEP][Prompt envoyé]", prompt);
+ // console.log("[SCRIPTSTEP][Prompt envoyé]", prompt);
 
   const grokRes = await fetch("https://api.x.ai/v1/chat/completions", {
     method: "POST",
@@ -50,14 +64,29 @@ Génère UNIQUEMENT la réplique du modèle${typeof etape !== 'undefined' ? ` po
     })
   });
   const data = await grokRes.json();
-  console.log("[GROK API] data:", data);
+  //console.log("[GROK API] data:", data);
   const messageObj = data.choices?.[0]?.message;
-  console.log("[GROK API] messageObj:", messageObj);
+  //console.log("[GROK API] messageObj:", messageObj);
   let text = messageObj?.content || "";
   if (!text && messageObj?.reasoning_content) {
     text = messageObj.reasoning_content;
   }
   // Nettoyage : retire tout sauf la réplique du modèle
+  // Déduction des crédits (1 crédit = 100 tokens, arrondi supérieur)
+  let tokensUsed = 0;
+  if (data.usage) {
+    tokensUsed = data.usage.total_tokens || 0;
+  }
+  const creditsToDeduct = Math.ceil(tokensUsed / 100);
+  if (dbUser.credits < creditsToDeduct) {
+    return NextResponse.json({ error: "Crédits insuffisants" }, { status: 402 });
+  }
+  dbUser.credits -= creditsToDeduct;
+  try {
+    await dbUser.save();
+  } catch (err) {
+    return NextResponse.json({ error: "Erreur lors de la sauvegarde de l'utilisateur", details: err.message }, { status: 500 });
+  }
   const reponse = text.split('\n').find(l => l.trim().length > 0) || text;
-  return NextResponse.json({ reponse });
+  return NextResponse.json({ reponse, creditsLeft: dbUser.credits });
 }
