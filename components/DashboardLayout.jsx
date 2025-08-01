@@ -1,23 +1,66 @@
-"use client";
-import React, { useState } from "react";
-import { SessionProvider } from "next-auth/react";
-import Sidebar from "./Sidebar.jsx";
-import Topbar from "./Topbar.jsx";
-import SuggestionBox from "./SuggestionBox.jsx";
+'use client'
 
-const DashboardLayout = ({ children, creditsLeft }) => {
+import { SessionProvider, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Topbar from "./Topbar";
+import Sidebar from "./Sidebar";
+import useAutoAssignPlan from "../hooks/useAutoAssignPlan";
+
+// Sous-composant qui affiche le layout seulement si connecté
+function DashboardLayoutComponent({ children, creditsLeft }) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { isAssigning, assignmentResult, needsPlan } = useAutoAssignPlan();
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, status, router]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="text-white text-xl">Chargement...</div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null; // Redirection en cours
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] flex">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <Topbar creditsLeft={creditsLeft} />
+
+        {isAssigning && (
+          <div className="bg-blue-500/20 border border-blue-500 text-blue-300 px-4 py-3 mx-6 mt-4 rounded-lg">
+            <div className="flex items-center gap-2">
+              <div className="animate-spin h-4 w-4 border-2 border-blue-300 border-t-transparent rounded-full"></div>
+              Attribution de votre plan gratuit en cours...
+            </div>
+          </div>
+        )}
+
+
+        <main className="flex-1 p-6">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+// Composant exporté par défaut qui wrappe avec <SessionProvider>
+export default function DashboardLayout({ children, creditsLeft }) {
   return (
     <SessionProvider>
-      <div className="bg-[#0d0d0d] min-h-screen w-full flex">
-        <Sidebar />
-        <div className="flex-1 ml-64">
-          <Topbar creditsLeft={creditsLeft} />
-          <div className="pt-20 px-8 pb-8">{children}</div>
-          <SuggestionBox />
-        </div>
-      </div>
+      <DashboardLayoutComponent creditsLeft={creditsLeft} children={children} />
     </SessionProvider>
   );
-};
-
-export default DashboardLayout;
+}

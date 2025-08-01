@@ -18,43 +18,16 @@ export const authOptions = {
       
       if (!existingUser) {
         try {
-          // Cherche le plan gratuit (par nom ou prix = 0)
-          const freePlan = await Plan.findOne({ 
-            $or: [
-              { name: { $regex: /gratuit/i } }, // insensible à la casse
-              { price: 0 }
-            ]
-          });
-
-          // Données de base pour le nouvel utilisateur
-          const userData = {
+          // Crée l'utilisateur basique SANS plan (attribution plus tard)
+          await User.create({
             googleId: profile.sub,
             email: profile.email,
             name: profile.name,
             avatar: profile.picture,
-          };
-
-          // Si un plan gratuit existe, l'attribuer
-          if (freePlan) {
-            const now = new Date();
-            const endDate = new Date(now);
-            endDate.setMonth(endDate.getMonth() + 1); // Plan d'1 mois
-
-            userData.plan = freePlan._id;
-            userData.credits = freePlan.credits;
-            userData.creditsRenewalDate = now;
-            userData.planHistory = [{
-              plan: freePlan._id,
-              startDate: now,
-              endDate: endDate
-            }];
-
-            console.log(`[AUTH] Plan gratuit "${freePlan.name}" attribué au nouvel utilisateur ${profile.email}`);
-          } else {
-            console.warn('[AUTH] Aucun plan gratuit trouvé pour le nouvel utilisateur');
-          }
-
-          await User.create(userData);
+            // Pas de plan ici, sera attribué au dashboard
+          });
+          
+          console.log(`[AUTH] Nouvel utilisateur créé: ${profile.email}`);
         } catch (err) {
           // Ignore duplicate key error
           if (err.code !== 11000) {
@@ -89,6 +62,9 @@ export const authOptions = {
       }
       return session;
     },
+  },
+  pages: {
+    signIn: '/login',
   },
 };
 

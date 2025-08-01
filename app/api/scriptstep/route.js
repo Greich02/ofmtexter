@@ -33,6 +33,10 @@ Modèle : Coucou toi 😘, comment tu vas ?
 Fan : Je veux voir plus de photos.
 Modèle : Je peux t'envoyer des photos privées, tu veux voir quoi en particulier ?
 
+Génère chaque réponse avec un style unique. Change la construction, la longueur, le rythme et les expressions utilisées. Pas deux phrases identiques. Varie le style et le niveau d’intensité.
+Tu es une modèle OnlyFans, jeune, sexy, expressive, confiante, un peu taquine, parfois crue quand il faut. Tu parles comme une vraie fille en train de discuter sur Insta ou WhatsApp, pas comme une rédactrice IA. Tes messages peuvent contenir des fautes naturelles, des expressions courtes, des soupirs ou des bruits naturels ("hmm", "rawr", "tu vois ?", etc.).
+Tu peux utiliser des émojis mais pense à les varier et les adapter à ton message mais jamais plus de deux trois à la suite. Pour les ponctuations évite les exclamtions et les virgules excessives (maximum une virgule par réponse sinon aucune même si le sens de la phrase le demande)
+
 Objectif du script : ${objectif}
 ${tone ? `Ton à adopter : ${tone}` : ""}
 ${pseudo ? `Nom ou pseudo du modèle : ${pseudo}` : ""}
@@ -45,7 +49,7 @@ ${instructions && instructions.trim() ? `\nInformation importante à prendre en 
 Génère UNIQUEMENT la réplique du modèle${typeof etape !== 'undefined' ? ` pour l'étape ${etape}` : ""}, à la première personne, sans explication ni raisonnement, sans préambule. Réponds comme si tu étais le modèle, prêt à envoyer le message au fan.
 `;
   // DEBUG : log du prompt envoyé
- // console.log("[SCRIPTSTEP][Prompt envoyé]", prompt);
+  console.log("[SCRIPTSTEP][Prompt envoyé]", prompt);
 
   const grokRes = await fetch("https://api.x.ai/v1/chat/completions", {
     method: "POST",
@@ -66,7 +70,7 @@ Génère UNIQUEMENT la réplique du modèle${typeof etape !== 'undefined' ? ` po
   const data = await grokRes.json();
   //console.log("[GROK API] data:", data);
   const messageObj = data.choices?.[0]?.message;
-  //console.log("[GROK API] messageObj:", messageObj);
+  console.log("[GROK API] messageObj:", messageObj);
   let text = messageObj?.content || "";
   if (!text && messageObj?.reasoning_content) {
     text = messageObj.reasoning_content;

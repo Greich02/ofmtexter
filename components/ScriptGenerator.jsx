@@ -124,6 +124,7 @@ export default function ScriptGenerator({ setCreditsLeft }) {
     setHistorique(newHist);
     await generateAndAddModelReply(newHist);
     setCurrentStep(currentStep + 1);
+    console.log("Historique: ", historique)
   };
 
   return (
@@ -190,13 +191,15 @@ export default function ScriptGenerator({ setCreditsLeft }) {
                   // Déduire les crédits après génération
                   if (typeof user?.credits === "number") {
                     // On suppose que l'API retourne le nombre de crédits restants
-                    try {
+                    {/**
+                      try {
                       const res = await fetch("/api/get-credits", { method: "GET" });
                       const data = await res.json();
                       setCreditsLeft(data.creditsLeft);
                     } catch (err) {
                       console.error("[ScriptGenerator] Erreur récupération crédits:", err);
                     }
+                      */}
                   }
                   setCurrentStep(2);
                 }
