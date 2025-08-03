@@ -19,7 +19,7 @@ function TopbarContent({ showDashboardButton, creditsLeft }) {
     <header className="fixed top-0 left-0 right-0 w-full h-16 bg-[#181828] flex items-center justify-between px-8 z-40 shadow-lg">
       <a href="/">
         <div className="flex items-center gap-2">
-          <span className="text-blue-400 font-extrabold text-2xl neon-glow">OnlyPrompt</span>
+          <span className="text-blue-400 font-extrabold text-2xl neon-glow">OfmPilot</span>
         </div>
       </a>
       <div className="flex items-center gap-6">

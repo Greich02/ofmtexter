@@ -34,7 +34,7 @@ export default function Sidebar() {
         </ul>
       </nav>
       <div className="flex flex-col items-center gap-4 mt-8">
-        <span className="text-blue-400 font-extrabold text-xl neon-glow">OnlyPrompt</span>
+        <span className="text-blue-400 font-extrabold text-xl neon-glow">OfmPilot</span>
         <div className="bg-[#181828] rounded-lg px-3 py-2 text-xs text-gray-300 flex flex-col items-center w-full">
           <span>Plan Premium</span>
           <span className="font-bold text-blue-400">125 crédits restants</span>

@@ -12,7 +12,7 @@ export default function Footer() {
             <a href="#policy" className="hover:text-blue-400">Politique</a>
             <a href="#faq" className="hover:text-blue-400">FAQ</a>
           </div>
-          <div>Email : <a href="mailto:support@onlyprompt.ai" className="text-blue-400 hover:underline">support@onlyprompt.ai</a></div>
+          <div>Email : <a href="mailto:support@ofmpilot.com" className="text-blue-400 hover:underline">support@onlyprompt.ai</a></div>
           <div className="flex gap-4 mt-2">
             <a href="#" className="hover:text-blue-400"><span className="text-xl">X</span></a>
             <a href="#" className="hover:text-blue-400"><span className="text-xl">Discord</span></a>
@@ -20,7 +20,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="text-sm text-center md:text-right mt-4 md:mt-0">
-          © 2025 OnlyPrompt. Tous droits réservés.
+          © 2025 OfmPilot. Tous droits réservés.
         </div>
       </div>
     </footer>

@@ -36,7 +36,7 @@ function AIDashboardAnimation() {
   return (
     <div className="bg-gradient-to-tr from-blue-900 via-blue-400 to-blue-900 rounded-2xl p-0 shadow-2xl w-[370px] md:w-[420px] h-[220px] flex flex-col justify-start items-center relative border-2 border-blue-400" id="/home" >
       <div className="w-full flex items-center justify-between px-4 py-2 bg-[#101a2b] rounded-t-2xl border-b border-blue-800">
-        <span className="text-xs text-blue-300 font-mono">onlyprompt.ai</span>
+        <span className="text-xs text-blue-300 font-mono">OfmPilot.com</span>
         <div className="flex gap-1">
           <span className="w-2 h-2 rounded-full bg-green-400 inline-block"></span>
           <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block"></span>
@@ -75,7 +75,7 @@ export default function HeroSection() {
           <span className="text-blue-400 neon-glow mt-5" >Générez des messages performants en un clic.</span>
         </h1>
         <p className="text-lg text-gray-300 mb-8">
-          OnlyPrompt vous aide à automatiser vos conversations, scripts et ventes avec une IA fine-tunée pour les modèles, chateurs et managers.
+          OfmPilot vous aide à automatiser vos conversations, scripts et ventes avec une IA fine-tunée pour les modèles, chateurs et managers.
         </p>
         {!session?.user && (
           <div className="flex gap-4 mb-8">

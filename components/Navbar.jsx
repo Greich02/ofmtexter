@@ -6,7 +6,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 w-full z-50 bg-black bg-opacity-70 backdrop-blur-md flex items-center justify-between px-8 py-4 shadow-lg">
       <a href="/">
         <div className="flex items-center gap-2">
-          <span className="text-blue-400 font-extrabold text-2xl neon-glow">OnlyPrompt</span>
+          <span className="text-blue-400 font-extrabold text-2xl neon-glow">OfmPilot</span>
         </div>
       </a>
       <ul className="flex gap-8 text-gray-200 font-medium">
