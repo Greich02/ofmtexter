@@ -101,10 +101,10 @@ Réponds UNIQUEMENT avec le message du modèle${typeof etape !== 'undefined' ? `
     tokensUsed = data.usage.total_tokens || 0;
   }
   
-  const creditsToDeduct = Math.ceil(tokensUsed / 100);
+const creditsToDeduct = parseFloat((tokensUsed / 1000).toFixed(2));
 
 // Même si le solde est insuffisant, on déduit jusqu’à 0
-dbUser.credits = Math.max(0, dbUser.credits - creditsToDeduct);
+dbUser.credits = parseFloat(Math.max(0, dbUser.credits - creditsToDeduct).toFixed(2));
 
 try {
   await dbUser.save();

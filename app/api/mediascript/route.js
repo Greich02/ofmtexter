@@ -81,10 +81,10 @@ export async function POST(req) {
     results.push({ stepName: step.name, content: reponse });
   }
   // Déduction des crédits (1 crédit = 100 tokens, arrondi supérieur)
- const creditsToDeduct = Math.ceil(totalTokensUsed / 100);
+const creditsToDeduct = parseFloat((tokensUsed / 1000).toFixed(2));
 
 // Même si l'utilisateur n'a pas assez de crédits, on les réduit jusqu'à 0
-dbUser.credits = Math.max(0, dbUser.credits - creditsToDeduct);
+dbUser.credits = parseFloat(Math.max(0, dbUser.credits - creditsToDeduct).toFixed(2));
 
 try {
   await dbUser.save();

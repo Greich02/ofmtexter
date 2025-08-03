@@ -2,10 +2,11 @@
 
 import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Topbar from "./Topbar";
 import Sidebar from "./Sidebar";
 import useAutoAssignPlan from "../hooks/useAutoAssignPlan";
+import Loader from "./Loader";
 
 // Sous-composant qui affiche le layout seulement si connecté
 function DashboardLayoutComponent({ children, creditsLeft }) {
@@ -20,16 +21,8 @@ function DashboardLayoutComponent({ children, creditsLeft }) {
     }
   }, [session, status, router]);
 
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="text-white text-xl">Chargement...</div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return null; // Redirection en cours
+  if (!session || status === "loading") {
+    return <Loader />; // Redirection ou chargement en cours
   }
 
   return (
@@ -47,14 +40,12 @@ function DashboardLayoutComponent({ children, creditsLeft }) {
           </div>
         )}
 
-
-        <main className="flex-1 p-6">
-          {children}
-        </main>
+        <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
   );
 }
+
 
 // Composant exporté par défaut qui wrappe avec <SessionProvider>
 export default function DashboardLayout({ children, creditsLeft }) {
