@@ -39,7 +39,7 @@ function TopbarContent({ showDashboardButton, creditsLeft }) {
           ) : (
             <button className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#232346] text-gray-200 font-semibold hover:text-blue-400 transition">
               <span>👤</span>
-              <span>{user?.email || "Manager"}</span>
+              <span>{user?.email}</span>
             </button>
           )}
         </div>
