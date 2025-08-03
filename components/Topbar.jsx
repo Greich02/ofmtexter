@@ -34,7 +34,7 @@ function TopbarContent({ showDashboardButton, creditsLeft }) {
           {user?.avatar ? (
             <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#232346] text-gray-200 font-semibold">
               <img src={user.avatar} alt="avatar" className="w-8 h-8 rounded-full object-cover border border-blue-400" />
-              <span className="text-blue-400 font-bold">{user.email}</span>
+              <span className="text-blue-400 font-bold">{user?.email}</span>
             </div>
           ) : (
             <button className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#232346] text-gray-200 font-semibold hover:text-blue-400 transition">
