@@ -9,6 +9,8 @@ export default function ScriptGenerator({ setCreditsLeft }) {
   const hasProScript = user?.planAccess?.proScript;
   const credits = typeof user?.credits === "number" ? user.credits : 0;
   const [creditsLeftState, setCreditsLeftState] = useState(credits);
+  const [conversationEnCours, setConversationEnCours] = useState(false);
+
   // Synchronise creditsLeftState avec user.credits à chaque changement de session
   React.useEffect(() => {
     setCreditsLeftState(credits);
@@ -124,11 +126,10 @@ export default function ScriptGenerator({ setCreditsLeft }) {
     setHistorique(newHist);
     await generateAndAddModelReply(newHist);
     setCurrentStep(currentStep + 1);
-    console.log("Historique: ", historique)
   };
 
   return (
-    <div className="bg-[#181828] rounded-2xl p-8 shadow-lg max-w-4xl mx-auto mb-8">
+    <div className="bg-[#181828] rounded-2xl p-8 shadow-lg max-w-3xl mx-auto mb-8 mt-8">
       <div className="relative flex items-center mb-6">
         <h2 className="text-2xl font-bold text-white flex-1">Génération de Scripts</h2>
         <div className="ml-auto relative group select-none" style={{marginLeft: 'auto'}}>
@@ -177,7 +178,7 @@ export default function ScriptGenerator({ setCreditsLeft }) {
             {tones.map(t => <option key={t}>{t}</option>)}
           </select>
           {/* Champ instructions déplacé ici, juste au-dessus du bouton Envoyer */}
-          {!historique.length && (
+          {currentStep === 1 && (
             <>
               <label className="block text-gray-300 mt-4 mb-2">Contexte initial : dernier message du fan</label>
               <textarea className="w-full p-3 rounded bg-[#181820] text-gray-300 mb-4 border border-[#232346] focus:border-blue-500 transition" rows={2} value={initialFanMsg} onChange={e => setInitialFanMsg(e.target.value)} placeholder="Entrez le contexte ou le dernier message du fan ici..." />
@@ -189,27 +190,16 @@ export default function ScriptGenerator({ setCreditsLeft }) {
                   // Génère et facture le premier message
                   await generateAndAddModelReply(hist);
                   // Déduire les crédits après génération
-                  if (typeof user?.credits === "number") {
-                    // On suppose que l'API retourne le nombre de crédits restants
-                    {/**
-                      try {
-                      const res = await fetch("/api/get-credits", { method: "GET" });
-                      const data = await res.json();
-                      setCreditsLeft(data.creditsLeft);
-                    } catch (err) {
-                      console.error("[ScriptGenerator] Erreur récupération crédits:", err);
-                    }
-                      */}
-                  }
                   setCurrentStep(2);
+                  setConversationEnCours(true);
                 }
-              }} disabled={isLoading || !initialFanMsg}>
+              }} disabled={isLoading || !initialFanMsg || !canGenerate }>
                 {isLoading ? "Génération..." : "Démarrer la conversation"}
               </button>
             </>
           )}
         </div>
-          {historique.length > 0 && historique[historique.length - 1]?.modele && (
+          {conversationEnCours && (
             <div className="mb-8">
               <label className="block text-gray-300 mb-2">Réponse de l'abonné</label>
               <textarea className="w-full p-3 rounded bg-[#232346] text-gray-200 mb-4" rows={2} value={abonneMsg} onChange={e => setAbonneMsg(e.target.value)} placeholder="Entrez la réponse de l'abonné ici..." />

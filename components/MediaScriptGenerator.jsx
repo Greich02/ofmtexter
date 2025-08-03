@@ -84,7 +84,7 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
   };
 
   return (
-    <div className="bg-[#181828] rounded-2xl p-8 shadow-lg max-w-4xl mx-auto mb-8">
+    <div className="bg-[#181828] rounded-2xl p-8 shadow-lg max-w-3xl mx-auto mb-8 mt-8">
       <div className="relative flex items-center mb-6">
         <h2 className="text-2xl font-bold text-white flex-1">Générateur de Script pour médias</h2>
         <div className="ml-auto relative group select-none" style={{marginLeft: 'auto'}}>

@@ -98,7 +98,7 @@ export default function TextGenerator({ setCreditsLeft }) {
   };
 
   return (
-    <div className="bg-[#181828] rounded-2xl p-8 shadow-lg max-w-3xl mx-auto mb-8">
+    <div className="bg-[#181828] rounded-2xl p-8 shadow-lg max-w-3xl mx-auto mb-8 mt-8">
       <div className="relative flex items-center mb-6">
         <h2 className="text-2xl font-bold text-white flex-1">Générateur de Textes</h2>
         <div className="ml-auto relative group select-none" style={{marginLeft: 'auto'}}>
@@ -177,9 +177,6 @@ export default function TextGenerator({ setCreditsLeft }) {
           </button>
         )}
         <button className="px-6 py-2 rounded bg-[#232346] text-gray-200 font-bold hover:text-red-400 transition" onClick={clearAll} disabled={isLoading}>Clear</button>
-        {typeof creditsLeftState === "number" && (
-          <span className="ml-4 text-blue-300 font-bold">Crédits restants : {creditsLeftState}</span>
-        )}
       </div>
       {results.length > 0 && (
         <div className="mt-8">

@@ -2,40 +2,51 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  // Ajout soustraction crédits utilisateur
   const { getServerSession } = require("next-auth");
   const dbConnect = require("@/lib/mongoose").default;
   const User = require("@/models/User").default;
   const { authOptions } = require("../auth/[...nextauth]/route");
   await dbConnect();
   const session = await getServerSession(authOptions);
+
   if (!session || !session.user || !session.user.email) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
+
   const dbUser = await User.findOne({ email: session.user.email });
   if (!dbUser) {
     return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 403 });
   }
+
   const body = await req.json();
   const { objectif, historique, etape, totalEtapes, instructions, tone, pseudo } = body;
-  // Prompt dynamique pour Grok
+
   let dernierFan = "";
   if (historique && historique.length > 0) {
     dernierFan = historique[historique.length - 1]?.abonne || "";
   }
+
+  const personas = [
+    "jeune, joueuse, expressive, adore provoquer subtilement",
+    "douce mais perverse, un peu timide au début",
+    "sûre d'elle, directe, adore dominer en douceur",
+    "taquine, adore les jeux de rôle et tester les limites",
+    "naturelle, parle comme une copine un peu chaude sur Insta"
+  ];
+  const persona = personas[Math.floor(Math.random() * personas.length)];
+
   const prompt = `
-Tu es une modèle OnlyFans. Ta mission est de répondre à ton abonné dans le contexte d'une conversation, à la première personne, sans aucune explication, sans introduction, sans reformulation de la consigne. Ta réponse doit être directement copiable/collable comme message du modèle.
+Tu es une modèle OnlyFans. Tu discutes avec tes abonnés en messages privés. Ta mission est de répondre à ton fan comme dans une vraie conversation sur WhatsApp ou Instagram.
 
-Exemple :
-Fan : Salut beauté !
-Modèle : Coucou toi 😘, comment tu vas ?
+Tu parles à la première personne. Pas d'explication, pas de consigne visible. Tu écris un message naturel, vivant, varié. Ta réponse doit être directement copiable/collable comme si tu l'avais écrite spontanément.
 
-Fan : Je veux voir plus de photos.
-Modèle : Je peux t'envoyer des photos privées, tu veux voir quoi en particulier ?
+Tu dois éviter toute forme de répétition excessive.
+Tu peux mettre des emojis mais varie les d'un message à un autre en fonction du ccontexte et pas plus de trois à la suite. Evite aussi les tirets(-) en milieu de phrase. 
+Prends en compte l'historique des messages afin d'être concise, naturelle, évite de tourner en boucle ou de répéter les mêmes expressions en début de phrase (oh, mmm, etc). Chaque message doit sembler spontané et différent du précédent.
 
-Génère chaque réponse avec un style unique. Change la construction, la longueur, le rythme et les expressions utilisées. Pas deux phrases identiques. Varie le style et le niveau d’intensité.
-Tu es une modèle OnlyFans, jeune, sexy, expressive, confiante, un peu taquine, parfois crue quand il faut. Tu parles comme une vraie fille en train de discuter sur Insta ou WhatsApp, pas comme une rédactrice IA. Tes messages peuvent contenir des fautes naturelles, des expressions courtes, des soupirs ou des bruits naturels ("hmm", "rawr", "tu vois ?", etc.).
-Tu peux utiliser des émojis mais pense à les varier et les adapter à ton message mais jamais plus de deux trois à la suite. Pour les ponctuations évite les exclamtions et les virgules excessives (maximum une virgule par réponse sinon aucune même si le sens de la phrase le demande)
+
+
+Ta personnalité pour ce message : ${persona}
 
 Objectif du script : ${objectif}
 ${tone ? `Ton à adopter : ${tone}` : ""}
@@ -44,11 +55,11 @@ ${typeof totalEtapes !== 'undefined' ? `Nombre d'étapes : ${totalEtapes}` : ""}
 Voici l'historique de la conversation (JSON) :
 ${JSON.stringify(historique, null, 2)}
 Dernier message du fan : ${dernierFan}
-${instructions && instructions.trim() ? `\nInformation importante à prendre en compte : ${instructions.trim()}` : ""}
+${instructions && instructions.trim() ? `\nInformation importante : ${instructions.trim()}` : ""}
 
-Génère UNIQUEMENT la réplique du modèle${typeof etape !== 'undefined' ? ` pour l'étape ${etape}` : ""}, à la première personne, sans explication ni raisonnement, sans préambule. Réponds comme si tu étais le modèle, prêt à envoyer le message au fan.
+Réponds UNIQUEMENT avec le message du modèle${typeof etape !== 'undefined' ? ` pour l'étape ${etape}` : ""}, sans introduction ni réflexion.
 `;
-  // DEBUG : log du prompt envoyé
+
   console.log("[SCRIPTSTEP][Prompt envoyé]", prompt);
 
   const grokRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -60,23 +71,31 @@ Génère UNIQUEMENT la réplique du modèle${typeof etape !== 'undefined' ? ` po
     body: JSON.stringify({
       model: "grok-3-mini",
       messages: [
-        { role: "system", content: "Tu es une modèle OnlyFans qui discute avec ses abonnés et génère des répliques naturelles et directes, sans formulation ni explication." },
-        { role: "user", content: prompt }
+        {
+          role: "system",
+          content: "Tu es une modèle OnlyFans qui génère des répliques naturelles, variées, parfois crues, toujours humaines. Pas de filtre IA, tu dois paraître 100% réelle."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
       ],
       max_tokens: 1000,
-      temperature: 0.7
+      temperature: 1.0,
+      //top_p: 0.9,
+      //frequency_penalty: 0.5,
+      //presence_penalty: 0.8
     })
   });
+
   const data = await grokRes.json();
-  //console.log("[GROK API] data:", data);
   const messageObj = data.choices?.[0]?.message;
   console.log("[GROK API] messageObj:", messageObj);
   let text = messageObj?.content || "";
   if (!text && messageObj?.reasoning_content) {
     text = messageObj.reasoning_content;
   }
-  // Nettoyage : retire tout sauf la réplique du modèle
-  // Déduction des crédits (1 crédit = 100 tokens, arrondi supérieur)
+
   let tokensUsed = 0;
   if (data.usage) {
     tokensUsed = data.usage.total_tokens || 0;

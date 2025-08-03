@@ -7,7 +7,7 @@ export default function TeamPage() {
     <DashboardLayout>
         <div className="relative min-h-[60vh] flex flex-col items-center justify-center">
       {/* Contenu de gestion d'équipe (placeholder) */}
-      <div className="w-full max-w-2xl mx-auto p-8 rounded-xl bg-[#181828] shadow-lg blur-sm opacity-60 pointer-events-none select-none">
+      <div className="w-full max-w-3xl mx-auto p-8 rounded-xl bg-[#181828] shadow-lg blur-sm opacity-60 pointer-events-none select-none">
         <h2 className="text-2xl font-bold text-white mb-4">Gestion de l'équipe</h2>
         <div className="mb-6">
           <label className="block text-gray-300 mb-2">Ajouter un membre</label>
