@@ -30,7 +30,7 @@ export default function ScriptGenerator({ setCreditsLeft }) {
   // Aide contextuelle pour chaque section
   // L'aide s'affiche au hover, donc pas besoin d'état React
   const helpTexts = {
-    main: `Génère étape par étape un script de conversation entre un modèle et un abonné. Choisis l'objectif, le nombre d'étapes, puis démarre la conversation. Tu peux ajouter des instructions pour influencer le style ou le contenu des réponses.`,
+      main: `Mène une conversation avec suivie avec un ou plusieurs fan à la fois. Lance une discussion à partir du message d’un abonné, puis fais évoluer l’échange en ajoutant les réponses de l’abonné. Tu peux guider le style avec des instructions ou un ton spécifique.`
   };
   const objectifs = [
     "Sexualisation",
@@ -117,6 +117,7 @@ export default function ScriptGenerator({ setCreditsLeft }) {
       setCopiableMsg("Erreur lors de la génération.");
     }
     setIsLoading(false);
+    setInstructions(""); // Reset après envoi
   };
 
   // Ajoute la réponse abonné, génère la réponse modèle et met à jour l'historique
@@ -182,6 +183,27 @@ export default function ScriptGenerator({ setCreditsLeft }) {
             <>
               <label className="block text-gray-300 mt-4 mb-2">Contexte initial : dernier message du fan</label>
               <textarea className="w-full p-3 rounded bg-[#181820] text-gray-300 mb-4 border border-[#232346] focus:border-blue-500 transition" rows={2} value={initialFanMsg} onChange={e => setInitialFanMsg(e.target.value)} placeholder="Entrez le contexte ou le dernier message du fan ici..." />
+          <button
+                className="self-start mb-2 px-3 py-1 rounded bg-pink-500 text-white font-bold neon-glow shadow-pink-glow hover:bg-pink-600 transition text-sm"
+                onClick={() => setShowInstructions(v => !v)}
+                type="button"
+                style={{marginBottom: showInstructions ? 0 : 16}}
+              >
+                {showInstructions ? "Masquer les instructions" : "Instructions supplémentaires +"}
+              </button>
+              {showInstructions && (
+                <div className="mb-2">
+                  <label className="block text-gray-300 mb-2">Instructions supplémentaires</label>
+                  <textarea
+                    className="w-full p-3 rounded bg-[#232346] text-gray-200 italic border-slate-100 border-2 "
+                    rows={2}
+                    value={instructions}
+                    onChange={e => setInstructions(e.target.value)}
+                    placeholder="Ex: Le message doit contenir un emoji, rester mystérieux, etc."
+                  />
+                </div>
+              )}
+             
               <button className="w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition mt-4" onClick={async () => {
                 if (initialFanMsg) {
                   const hist = [{ modele: "", abonne: initialFanMsg }];

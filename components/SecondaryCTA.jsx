@@ -4,7 +4,7 @@ export default function SecondaryCTA() {
   return (
     <section className="py-16 bg-gradient-to-b from-gray-950 via-black to-gray-900 flex flex-col items-center">
       <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 text-center">
-        Rejoignez plus de 500 managers qui boostent leur conversion avec l’IA.
+        Rejoignez des centaines de managers et chatteurs qui boostent leur conversion avec l’IA.
       </h3>
       <button className="px-8 py-4 rounded-lg bg-blue-500 text-white font-bold shadow-blue-glow neon-glow hover:bg-blue-600 transition text-lg">
         Créer mon compte maintenant

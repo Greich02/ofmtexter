@@ -31,7 +31,8 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
     }
   }, [creditsLeftState, setCreditsLeft]);
   const helpTexts = {
-    main: `Crée un script média étape par étape. Ajoute des étapes, précise leur type et description, puis génère le script. Chaque étape correspond à une action ou un message à envoyer.`,
+        main: `Structure un script média complet en plusieurs étapes. Pour chaque action (envoi de photo, vocal, etc.), décris le contexte puis génère le message associé. Parfait pour planifier des séquences média efficaces.`
+
   };
   const [scriptName, setScriptName] = useState("");
   const [steps, setSteps] = useState([

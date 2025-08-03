@@ -3,25 +3,24 @@ import React from "react";
 const features = [
   {
     icon: "💬",
-    title: "Générateur de messages intelligents",
-    desc: "Créez des messages adaptés à chaque profil et situation."
+    title: "Réponses IA sur-mesure",
+    desc: "Générez des messages ultra-naturels adaptés à chaque abonné et contexte de conversation."
+  },
+  {
+    icon: "📜",
+    title: "Conversations suivies intelligentes",
+    desc: "Faites évoluer vos dialogues étape par étape grâce à des scripts dynamiques conçus pour convertir et engager."
   },
   {
     icon: "🖼️",
-    title: "Scripts média étape par étape",
-    desc: "Automatisez la création et l’envoi de médias selon vos besoins."
+    title: "Scripts médias en un clic",
+    desc: "Créez des scénarios personnalisés pour vos contenus photo, vidéo ou audio – étape par étape."
   },
   {
     icon: "👥",
-    title: "Gestion d’équipe intégrée",
-    desc: "Ajoutez, gérez et attribuez des rôles à vos collaborateurs."
+    title: "Pilotage de votre équipe",
+    desc: "Invitez vos chatteurs, assignez des rôles et suivez leurs performances en toute simplicité."
   },
-  {
-    icon: "🎯",
-    title: "Ciblage par rôle",
-    desc: "Manager, chateur, agence : chaque rôle a ses outils dédiés."
-  },
-
 ];
 
 export default function Features() {

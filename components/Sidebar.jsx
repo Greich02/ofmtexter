@@ -2,9 +2,9 @@ import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 const menu = [
-  { icon: "🧠", label: "Formuler des Textes", slug: "dashboard/textgenerator" },
-  { icon: "📜", label: "Génrérer des scripts ciblés", slug: "dashboard/scriptgenerator" },
-  { icon: "🎬", label: "Script pour médias", slug: "dashboard/mediascriptgenerator" },
+  { icon: "🧠", label: "Générer des réponses rapides", slug: "dashboard/textgenerator" },
+  { icon: "📜", label: "Conversations suivies (Pro) ", slug: "dashboard/scriptgenerator" },
+  { icon: "🎬", label: "Scripts pour contenus médias", slug: "dashboard/mediascriptgenerator" },
   { icon: "👥", label: "Gérer mon équipe", slug: "dashboard/equipe" },
 
 ];

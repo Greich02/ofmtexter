@@ -3,7 +3,7 @@ import KeyAdvantageCard from "./KeyAdvantageCard";
 
 export default function KeyAdvantages() {
   return (
-    <section className="py-16 bg-black flex flex-col items-center">
+    <section className="py-16 bg-black flex flex-col items-center" >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
         <KeyAdvantageCard
           icon={<span role="img" aria-label="Gain de temps">🔥</span>}

@@ -21,7 +21,7 @@ function HomeContent() {
         <HeroSection />
         <KeyAdvantages />
         <Features />
-        <SocialProof />
+        {/**<SocialProof /> */}
         <SecondaryCTA />
         <Footer />
       </div>

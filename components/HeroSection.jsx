@@ -6,7 +6,7 @@ function AIDashboardAnimation() {
   const answers = [
     "Ce soir ? Je pourrais te surprendre... 😏",
     "J'ai quelques idées très coquines en tête... Tu veux en savoir plus ?",
-    "Pourquoi ne pas venir me le demander en privé ? 😉",
+    "Je vais bien, un peu taquine aujourd'hui, et toi ? 😏",
     "Je te réserve une surprise... Tu es prêt ? 🔥",
   ];
   const [current, setCurrent] = useState(0);
@@ -34,7 +34,7 @@ function AIDashboardAnimation() {
   }, [displayed, phase, current, answers]);
 
   return (
-    <div className="bg-gradient-to-tr from-blue-900 via-blue-400 to-blue-900 rounded-2xl p-0 shadow-2xl w-[370px] md:w-[420px] h-[220px] flex flex-col justify-start items-center relative border-2 border-blue-400">
+    <div className="bg-gradient-to-tr from-blue-900 via-blue-400 to-blue-900 rounded-2xl p-0 shadow-2xl w-[370px] md:w-[420px] h-[220px] flex flex-col justify-start items-center relative border-2 border-blue-400" id="/home" >
       <div className="w-full flex items-center justify-between px-4 py-2 bg-[#101a2b] rounded-t-2xl border-b border-blue-800">
         <span className="text-xs text-blue-300 font-mono">onlyprompt.ai</span>
         <div className="flex gap-1">

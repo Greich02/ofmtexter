@@ -100,16 +100,19 @@ Réponds UNIQUEMENT avec le message du modèle${typeof etape !== 'undefined' ? `
   if (data.usage) {
     tokensUsed = data.usage.total_tokens || 0;
   }
+  
   const creditsToDeduct = Math.ceil(tokensUsed / 100);
-  if (dbUser.credits < creditsToDeduct) {
-    return NextResponse.json({ error: "Crédits insuffisants" }, { status: 402 });
-  }
-  dbUser.credits -= creditsToDeduct;
-  try {
-    await dbUser.save();
-  } catch (err) {
-    return NextResponse.json({ error: "Erreur lors de la sauvegarde de l'utilisateur", details: err.message }, { status: 500 });
-  }
-  const reponse = text.split('\n').find(l => l.trim().length > 0) || text;
-  return NextResponse.json({ reponse, creditsLeft: dbUser.credits });
+
+// Même si le solde est insuffisant, on déduit jusqu’à 0
+dbUser.credits = Math.max(0, dbUser.credits - creditsToDeduct);
+
+try {
+  await dbUser.save();
+} catch (err) {
+  return NextResponse.json({ error: "Erreur lors de la sauvegarde de l'utilisateur", details: err.message }, { status: 500 });
+}
+
+const reponse = text.split('\n').find(l => l.trim().length > 0) || text;
+
+return NextResponse.json({ reponse, creditsLeft: dbUser.credits });
 }

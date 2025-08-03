@@ -46,7 +46,7 @@ export default function TextGenerator({ setCreditsLeft }) {
   }, [creditsLeftState, setCreditsLeft]);
   // Aide contextuelle au hover
   const helpTexts = {
-    main: `Génère plusieurs variantes de réponses pour un échange entre un fan et un modèle. Remplis les messages, choisis le ton, l'objectif, le nombre de variantes, et ajoute des instructions si besoin. Clique sur "Générer les réponses" pour obtenir des suggestions IA.`,
+        main: `Génère plusieurs variantes de messages à envoyer à un fan. Remplis le contexte de la discussion, choisis un ton, un objectif, et ajoute des instructions si besoin. Clique sur "Générer" pour obtenir des réponses prêtes à l’emploi.`
   };
   const [exchanges, setExchanges] = useState([
     { fan: "", model: "" }
@@ -95,6 +95,8 @@ export default function TextGenerator({ setCreditsLeft }) {
       setResults([{ variant: 1, text: "Erreur lors de la génération." }]);
     }
     setIsLoading(false);
+    setInstructions(""); // Reset après envoi
+
   };
 
   return (
@@ -158,13 +160,13 @@ export default function TextGenerator({ setCreditsLeft }) {
         <div className="mb-4">
           <label className="block text-gray-300 mb-2">Instructions supplémentaires</label>
           <textarea
-            className="w-full p-3 rounded bg-[#232346] text-gray-200"
-            rows={2}
-            value={instructions}
-            onChange={e => setInstructions(e.target.value)}
-            placeholder="Ex: Le message doit contenir un emoji, rester mystérieux, etc."
-          />
-        </div>
+                className="w-full p-3 rounded bg-[#232346] text-gray-200 italic border-slate-100 border-2 "
+                 rows={2}
+                 value={instructions}
+                 onChange={e => setInstructions(e.target.value)}
+                 placeholder="Ex: Le message doit contenir un emoji, rester mystérieux, etc."
+               />
+             </div>
       )}
       <div className="flex gap-4 mb-6">
         {(!canGenerate || creditsLeftState === 0) ? (

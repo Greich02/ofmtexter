@@ -81,11 +81,16 @@ export async function POST(req) {
     results.push({ stepName: step.name, content: reponse });
   }
   // Déduction des crédits (1 crédit = 100 tokens, arrondi supérieur)
-  const creditsToDeduct = Math.ceil(totalTokensUsed / 100);
-  if (dbUser.credits < creditsToDeduct) {
-    return NextResponse.json({ error: "Crédits insuffisants" }, { status: 402 });
-  }
-  dbUser.credits -= creditsToDeduct;
+ const creditsToDeduct = Math.ceil(totalTokensUsed / 100);
+
+// Même si l'utilisateur n'a pas assez de crédits, on les réduit jusqu'à 0
+dbUser.credits = Math.max(0, dbUser.credits - creditsToDeduct);
+
+try {
   await dbUser.save();
-  return NextResponse.json({ results, creditsLeft: dbUser.credits });
+} catch (err) {
+  return NextResponse.json({ error: "Erreur lors de la sauvegarde de l'utilisateur", details: err.message }, { status: 500 });
+}
+
+return NextResponse.json({ results, creditsLeft: dbUser.credits });
 }
