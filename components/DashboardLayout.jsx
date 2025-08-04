@@ -28,11 +28,11 @@ function DashboardLayoutComponent({ children, creditsLeft }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col md:ml-64">
         <Topbar creditsLeft={creditsLeft} />
 
         {isAssigning && (
-          <div className="bg-blue-500/20 border border-blue-500 text-blue-300 px-4 py-3 mx-6 mt-4 rounded-lg">
+          <div className="bg-blue-500/20 border border-blue-500 text-blue-300 px-4 py-3 mx-4 md:mx-6 mt-4 rounded-lg">
             <div className="flex items-center gap-2">
               <div className="animate-spin h-4 w-4 border-2 border-blue-300 border-t-transparent rounded-full"></div>
               Attribution de votre plan gratuit en cours...
@@ -40,7 +40,7 @@ function DashboardLayoutComponent({ children, creditsLeft }) {
           </div>
         )}
 
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>
   );
