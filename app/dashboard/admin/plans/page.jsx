@@ -59,11 +59,21 @@ export default function PlansAdminPage() {
   }
 
   // Edit
-  function handleEdit(plan) {
-    setForm({ ...plan, features: plan.features.join("\n") });
-    setEditingId(plan._id);
-  }
+// Modifiez cette fonction dans dashboard/admin/plans/page.jsx
 
+function handleEdit(plan) {
+  setForm({ 
+    ...plan, 
+    features: plan.features.join("\n"),
+    access: {
+      team: plan.access?.team || false,
+      mediaScript: plan.access?.mediaScript || false,
+      proScript: plan.access?.proScript || false,
+      basicScript: plan.access?.basicScript || false, // ✅ Assure la présence du champ
+    }
+  });
+  setEditingId(plan._id);
+}
   // Delete
   async function handleDelete(id) {
     setLoading(true);
