@@ -36,15 +36,35 @@ function TopbarContent({ showDashboardButton, creditsLeft }) {
       </a>
 
       {/* Menu hamburger pour mobile */}
+      {/* Menu hamburger pour mobile */}
       <button
         onClick={toggleMenu}
-        className="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1"
+        className="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1 z-[100] relative"
         aria-label="Menu"
       >
-        <span className={`block w-6 h-0.5 bg-gray-200 transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-        <span className={`block w-6 h-0.5 bg-gray-200 transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-        <span className={`block w-6 h-0.5 bg-gray-200 transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+        <span
+          className={`block w-6 h-0.5 transition-all duration-300 ${
+            isMenuOpen
+              ? 'rotate-45 translate-y-1.5 bg-white'
+              : 'bg-gray-200'
+          }`}
+        ></span>
+        <span
+          className={`block w-6 h-0.5 transition-all duration-300 ${
+            isMenuOpen
+              ? 'opacity-0'
+              : 'bg-gray-200'
+          }`}
+        ></span>
+        <span
+          className={`block w-6 h-0.5 transition-all duration-300 ${
+            isMenuOpen
+              ? '-rotate-45 -translate-y-1.5 bg-white'
+              : 'bg-gray-200'
+          }`}
+        ></span>
       </button>
+
 
       {/* Menu desktop */}
       <div className="hidden md:flex items-center gap-6">
@@ -72,70 +92,74 @@ function TopbarContent({ showDashboardButton, creditsLeft }) {
         <button onClick={() => signOut({ callbackUrl: "/login" })} className="px-3 py-1 rounded bg-[#232346] text-gray-200 font-bold hover:text-red-400 transition text-sm">🚪 Se déconnecter</button>
       </div>
 
-      {/* Menu mobile */}
-      <div className={`md:hidden fixed top-16 left-0 w-full bg-[#181828] bg-opacity-95 backdrop-blur-md transition-all duration-300 ease-in-out ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-        <div className="flex flex-col py-6 space-y-4">
-          {/* Crédits */}
-          <div className="flex items-center justify-center gap-2 bg-[#232346] px-4 py-3 rounded-lg text-blue-400 font-bold shadow-blue-glow mx-4">
-            <span>🔢</span>
-            <span>{credits} crédits</span>
-          </div>
+{/* Menu mobile + overlay */}  
+{isMenuOpen && (
+  <div className="md:hidden fixed inset-0 z-50">
+    {/* Overlay semi-transparent pour fermer le menu */}
+    <div
+      className="absolute inset-0 bg-black bg-opacity-50"
+      onClick={closeMenu}
+    ></div>
 
-          {/* Dashboard button */}
-          {typeof showDashboardButton !== 'undefined' && showDashboardButton && (
-            <a 
-              href="/dashboard" 
-              onClick={closeMenu}
-              className="mx-4 px-4 py-3 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-center"
-            >
-              Dashboard
-            </a>
+    {/* Menu mobile au-dessus du fond */}
+    <div className="absolute top-16 left-0 w-full bg-[#181828] bg-opacity-95 backdrop-blur-md transition-all duration-300 ease-in-out">
+      <div className="flex flex-col py-6 space-y-4">
+        {/* Crédits */}
+        <div className="flex items-center justify-center gap-2 bg-[#232346] px-4 py-3 rounded-lg text-blue-400 font-bold shadow-blue-glow mx-4">
+          <span>🔢</span>
+          <span>{credits} crédits</span>
+        </div>
+
+        {/* Dashboard button */}
+        {typeof showDashboardButton !== 'undefined' && showDashboardButton && (
+          <a 
+            href="/dashboard" 
+            onClick={closeMenu}
+            className="mx-4 px-4 py-3 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-center"
+          >
+            Dashboard
+          </a>
+        )}
+
+        {/* User info */}
+        <div className="mx-4 px-4 py-3 rounded-lg bg-[#232346] text-gray-200 font-semibold">
+          {user?.avatar ? (
+            <div className="flex items-center gap-3">
+              <img src={user.avatar} alt="avatar" className="w-10 h-10 rounded-full object-cover border border-blue-400" />
+              <span className="text-blue-400 font-bold">{user?.email}</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <span>👤</span>
+              <span className="text-blue-400 font-bold">{user?.email}</span>
+            </div>
           )}
+        </div>
 
-          {/* User info */}
-          <div className="mx-4 px-4 py-3 rounded-lg bg-[#232346] text-gray-200 font-semibold">
-            {user?.avatar ? (
-              <div className="flex items-center gap-3">
-                <img src={user.avatar} alt="avatar" className="w-10 h-10 rounded-full object-cover border border-blue-400" />
-                <span className="text-blue-400 font-bold">{user?.email}</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <span>👤</span>
-                <span className="text-blue-400 font-bold">{user?.email}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col gap-3 mx-4">
-            <a 
-              href="/pricing" 
-              onClick={closeMenu}
-              className="px-4 py-3 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-center"
-            >
-              Mettre à niveau
-            </a>
-            <button 
-              onClick={() => {
-                closeMenu();
-                signOut({ callbackUrl: "/login" });
-              }} 
-              className="px-4 py-3 rounded bg-[#232346] text-gray-200 font-bold hover:text-red-400 transition text-center"
-            >
-              🚪 Se déconnecter
-            </button>
-          </div>
+        {/* Actions */}
+        <div className="flex flex-col gap-3 mx-4">
+          <a 
+            href="/pricing" 
+            onClick={closeMenu}
+            className="px-4 py-3 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-center"
+          >
+            Mettre à niveau
+          </a>
+          <button 
+            onClick={() => {
+              closeMenu();
+              signOut({ callbackUrl: "/login" });
+            }} 
+            className="px-4 py-3 rounded bg-[#232346] text-gray-200 font-bold hover:text-red-400 transition text-center"
+          >
+            🚪 Se déconnecter
+          </button>
         </div>
       </div>
+    </div>
+  </div>
+)}
 
-      {/* Overlay pour fermer le menu */}
-      {isMenuOpen && (
-        <div 
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
-          onClick={closeMenu}
-        ></div>
-      )}
     </header>
   );
 }

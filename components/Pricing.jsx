@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 
 const allFeatures = [
   "Générations incluses/mois",
-  "Accès équipe",
-  "Génération Pro",
+  "Génération de réponses rapides",
+  "Conversations suivies",
   "Scripts médias",
-  // "Usage individuel",
+  "Gestion d'équipe",
 ];
 
 const planFeatures = {
-  "Gratuit": ["~10", "Non", "Non", "Non", "Non"],
-  "Solo": ["~500", "Non", "Non", "Non", "Oui"],
-  "Pro": ["~1200", "Non", "Oui", "Non", "Oui"],
+  "Gratuit": ["~50", "Oui", "Oui", "Oui", "Non"],
+  "Solo": ["~500", "Oui", "Oui", "Non", "Non"],
+  "Pro": ["~1200", "Oui", "Oui", "Oui", "Non"],
   "Agence": ["~3500", "Oui", "Oui", "Oui", "Oui"],
 };
 
@@ -52,7 +52,7 @@ export default function Pricing({ isLoggedIn }) {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-2 ">
               {plans.map(plan => (
                 <div
                   key={plan.name}

@@ -10,7 +10,8 @@ const PlanSchema = new mongoose.Schema({
   access: {
     team: { type: Boolean, default: false },
     mediaScript: { type: Boolean, default: false },
-    proScript: { type: Boolean, default: false }
+    proScript: { type: Boolean, default: false },
+    basicScript : { type: Boolean, default: false },
   }
 });
 

@@ -93,13 +93,13 @@ function BuyCreditsPageContent() {
                 </div>
                 <div className="flex gap-4 mb-6">
                   <button
-                    className={`px-4 py-2 rounded-lg font-bold text-center transition ${payment === 'paypal' ? 'bg-blue-500 text-white' : 'bg-[#232346] text-blue-400'}`}
-                    onClick={() => setPayment('paypal')}
-                  >Paypal</button>
-                  <button
                     className={`px-4 py-2 rounded-lg font-bold text-center transition ${payment === 'crypto' ? 'bg-blue-500 text-white' : 'bg-[#232346] text-blue-400'}`}
                     onClick={() => setPayment('crypto')}
                   >Crypto</button>
+                  <button
+                    className={`px-4 py-2 rounded-lg font-bold text-center transition ${payment === 'paypal' ? 'bg-blue-500 text-white' : 'bg-[#232346] text-blue-400'}`}
+                    onClick={() => setPayment('paypal')} disabled
+                  >Paypal <span className="text-sm text-amber-300 italic" >(Indisponible) </span> </button>
                 </div>
               </React.Fragment>
             )}
@@ -184,7 +184,7 @@ function BuyCreditsPageContent() {
                 >Procéder au paiement</button>
                 <button
                   className="w-full px-6 py-3 rounded-xl bg-[#232346] text-blue-400 font-bold hover:bg-blue-500 hover:text-white"
-                  onClick={() => router.push('/tarifs')}
+                  onClick={() => router.push('/pricing')}
                 >Revenir aux tarifs</button>
               </div>
             </React.Fragment>

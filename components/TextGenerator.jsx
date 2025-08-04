@@ -33,9 +33,9 @@ const objectifs = [
 
 export default function TextGenerator({ setCreditsLeft }) {
   const { user, loading } = useUserSession();
-  const hasProScript = user?.planAccess?.proScript;
+  const hasBasicScript = user?.planAccess?.basicScript;
   const credits = typeof user?.credits === "number" ? user.credits : null;
-  const canGenerate = hasProScript && credits > 0;
+  const canGenerate = hasBasicScript && credits > 0;
   const [creditsLeftState, setCreditsLeftState] = useState(credits);
 
   // Synchronise creditsLeftState avec Topbar à chaque changement

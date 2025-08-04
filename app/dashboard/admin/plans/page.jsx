@@ -9,7 +9,7 @@ function emptyPlan() {
     credits: 0,
     features: [],
     highlight: false,
-    access: { team: false, mediaScript: false, proScript: false },
+    access: { team: false, mediaScript: false, proScript: false, basicScript : false, },
   };
 }
 
@@ -93,12 +93,20 @@ export default function PlansAdminPage() {
             <input id="plan-credits" name="credits" type="number" value={form.credits} onChange={handleChange} placeholder="Crédits/mois" className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-gray-100" required />
           </div>
         </div>
-        <textarea name="features" value={form.features} onChange={handleChange} placeholder="Fonctionnalités (une par ligne)" className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-gray-100 h-28" />
-        <div className="flex flex-wrap gap-4 items-center">
+      <textarea
+        name="features"
+        value={Array.isArray(form.features) ? form.features.join("\n") : form.features}
+        onChange={handleChange}
+        placeholder="Fonctionnalités (une par ligne)"
+        className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 bg-gray-100 h-28"
+      />
+          <div className="flex flex-wrap gap-4 items-center">
           <label className="flex items-center gap-2 text-gray-700"><input type="checkbox" name="highlight" checked={form.highlight} onChange={handleChange} /> Highlight</label>
           <label className="flex items-center gap-2 text-gray-700"><input type="checkbox" name="access.team" checked={form.access.team} onChange={handleChange} /> Team</label>
           <label className="flex items-center gap-2 text-gray-700"><input type="checkbox" name="access.mediaScript" checked={form.access.mediaScript} onChange={handleChange} /> MediaScript</label>
           <label className="flex items-center gap-2 text-gray-700"><input type="checkbox" name="access.proScript" checked={form.access.proScript} onChange={handleChange} /> ProScript</label>
+          <label className="flex items-center gap-2 text-gray-700"><input type="checkbox" name="access.basicScript" checked={form.access.basicScript} onChange={handleChange} /> BasicScript</label>
+
         </div>
         <div className="flex gap-4 items-center">
           <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow transition">

@@ -62,7 +62,7 @@ export default function Sidebar() {
       {/* Bouton hamburger mobile */}
       <button
         onClick={toggleMobileMenu}
-        className="md:hidden fixed top-20 left-4 z-50 flex flex-col justify-center items-center w-10 h-10 bg-[#0d0d0d] rounded-lg shadow-lg"
+        className="md:hidden fixed top-16 left-0 z-50 flex flex-col justify-center items-center w-8 h-8 bg-[#0d0d0d] rounded-lg shadow-lg"
         aria-label="Menu"
       >
         <span className={`block w-5 h-0.5 bg-gray-200 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
