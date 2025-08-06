@@ -1,5 +1,6 @@
 
 import "./globals.css";
+import { LanguageProvider } from "../contexts/LanguageContext.jsx";
 
 export const metadata = {
   title: 'OfmPilot - Générateur de Textes et Scripts IA',
@@ -17,7 +18,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <body>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

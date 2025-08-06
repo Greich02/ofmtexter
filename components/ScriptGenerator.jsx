@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import objectiveInstructions from "../lib/objectiveInstructions";
 import toneInstructions from "../lib/toneInstructions";
 import useUserSession from "./useUserSession";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../lib/i18n";
 
 
 export default function ScriptGenerator({ setCreditsLeft }) {
   const { user, loading } = useUserSession();
+  const { language } = useLanguage();
   const hasProScript = user?.planAccess?.proScript;
   const credits = typeof user?.credits === "number" ? user.credits : 0;
   const [creditsLeftState, setCreditsLeftState] = useState(credits);
@@ -30,33 +33,33 @@ export default function ScriptGenerator({ setCreditsLeft }) {
   // Aide contextuelle pour chaque section
   // L'aide s'affiche au hover, donc pas besoin d'état React
   const helpTexts = {
-      main: `Mène une conversation avec suivie avec un ou plusieurs fan à la fois. Lance une discussion à partir du message d’un abonné, puis fais évoluer l’échange en ajoutant les réponses de l’abonné. Tu peux guider le style avec des instructions ou un ton spécifique.`
+    main: t("scriptgen_help_main", language)
   };
   const objectifs = [
-    "Sexualisation",
-    "Engagement",
-    "KYC",
-    "Vente de média",
-    "Demande de tips",
-    "Vente complémentaire",
-    "Réactivation",
-    "Remerciement",
-    "Justification",
-    "Négociation",
-    "Teasing",
-    "Conversion"
+    t("objective_sexualization", language),
+    t("objective_engagement", language),
+    t("objective_kyc", language),
+    t("objective_media_sale", language),
+    t("objective_tips_request", language),
+    t("objective_upsell", language),
+    t("objective_reactivation", language),
+    t("objective_thanks", language),
+    t("objective_justification", language),
+    t("objective_negotiation", language),
+    t("objective_teasing", language),
+    t("objective_conversion", language)
   ];
   const tones = [
-    "Neutre",
-    "Sexuel",
-    "Aguicheur",
-    "Tendre",
-    "Taquin",
-    "Dominant",
-    "Chouineur",
-    "Drôle",
-    "Fou",
-    "Romantique",
+    t("tone_neutral", language),
+    t("tone_sexual", language),
+    t("tone_flirty", language),
+    t("tone_tender", language),
+    t("tone_teasing", language),
+    t("tone_dominant", language),
+    t("tone_whiny", language),
+    t("tone_funny", language),
+    t("tone_crazy", language),
+    t("tone_romantic", language)
   ];
   const [tone, setTone] = useState(tones[0]);
   const [objectif, setObjectif] = useState(objectifs[0]);
@@ -132,13 +135,13 @@ export default function ScriptGenerator({ setCreditsLeft }) {
   return (
     <div className="bg-[#181828] rounded-2xl p-8 shadow-lg max-w-3xl mx-auto mb-8 mt-8">
       <div className="relative flex items-center mb-6">
-        <h2 className="text-2xl font-bold text-white flex-1">Génération de Scripts</h2>
+        <h2 className="text-2xl font-bold text-white flex-1">{t("scriptgen_title", language)}</h2>
         <div className="ml-auto relative group select-none" style={{marginLeft: 'auto'}}>
       {/* Champ pseudo et bouton nouveau chat sous le titre */}
           <span
             className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-blue-400 bg-[#181f3a] text-blue-300 text-xs font-bold cursor-help transition-all duration-150 shadow-none group-hover:bg-blue-500 group-hover:text-white"
             tabIndex={0}
-            aria-label="Aide Génération de Scripts"
+            aria-label={t("scriptgen_help_aria", language)}
           >
             ?
           </span>
@@ -169,37 +172,37 @@ export default function ScriptGenerator({ setCreditsLeft }) {
         >Nouveau chat</button>
       </div>
         <div className="bg-[#232346] rounded-b-lg p-6 mb-6 relative">
-          <button className="absolute top-4 right-4 px-3 py-1 rounded bg-pink-500 text-white font-bold shadow-pink-glow hover:bg-pink-600 transition" onClick={handleClear} title="Réinitialiser la conversation">🧹 Clear</button>
-          <label className="block text-gray-300 mb-2">Objectif du script</label>
+          <button className="absolute top-4 right-4 px-3 py-1 rounded bg-pink-500 text-white font-bold shadow-pink-glow hover:bg-pink-600 transition" onClick={handleClear} title={t("scriptgen_clear_btn", language)}>🧹 {t("scriptgen_clear_btn", language)}</button>
+          <label className="block text-gray-300 mb-2">{t("scriptgen_objective_label", language)}</label>
           <select className="w-full p-3 rounded bg-[#181828] text-gray-200 mb-4" value={objectif} onChange={e => setObjectif(e.target.value)}>
             {objectifs.map(o => <option key={o}>{o}</option>)}
           </select>
-          <label className="block text-gray-300 mb-2">Ton</label>
+          <label className="block text-gray-300 mb-2">{t("scriptgen_tone_label", language)}</label>
           <select className="w-full p-3 rounded bg-[#181828] text-gray-200 mb-4" value={tone} onChange={e => setTone(e.target.value)}>
             {tones.map(t => <option key={t}>{t}</option>)}
           </select>
           {/* Champ instructions déplacé ici, juste au-dessus du bouton Envoyer */}
           {currentStep === 1 && (
             <>
-              <label className="block text-gray-300 mt-4 mb-2">Contexte initial : dernier message du fan</label>
-              <textarea className="w-full p-3 rounded bg-[#181820] text-gray-300 mb-4 border border-[#232346] focus:border-blue-500 transition" rows={2} value={initialFanMsg} onChange={e => setInitialFanMsg(e.target.value)} placeholder="Entrez le contexte ou le dernier message du fan ici..." />
+              <label className="block text-gray-300 mt-4 mb-2">{t("scriptgen_step_label", language).replace("{step}", "1")}</label>
+              <textarea className="w-full p-3 rounded bg-[#181820] text-gray-300 mb-4 border border-[#232346] focus:border-blue-500 transition" rows={2} value={initialFanMsg} onChange={e => setInitialFanMsg(e.target.value)} placeholder={t("scriptgen_step_placeholder", language)} />
           <button
                 className="self-start mb-2 px-3 py-1 rounded bg-pink-500 text-white font-bold neon-glow shadow-pink-glow hover:bg-pink-600 transition text-sm"
                 onClick={() => setShowInstructions(v => !v)}
                 type="button"
                 style={{marginBottom: showInstructions ? 0 : 16}}
               >
-                {showInstructions ? "Masquer les instructions" : "Instructions supplémentaires +"}
+                {showInstructions ? t("scriptgen_hide_instructions_btn", language) : t("scriptgen_add_instructions_btn", language)}
               </button>
               {showInstructions && (
                 <div className="mb-2">
-                  <label className="block text-gray-300 mb-2">Instructions supplémentaires</label>
+                  <label className="block text-gray-300 mb-2">{t("scriptgen_instructions_label", language)}</label>
                   <textarea
                     className="w-full p-3 rounded bg-[#232346] text-gray-200 italic border-slate-100 border-2 "
                     rows={2}
                     value={instructions}
                     onChange={e => setInstructions(e.target.value)}
-                    placeholder="Ex: Le message doit contenir un emoji, rester mystérieux, etc."
+                    placeholder={t("scriptgen_instructions_placeholder", language)}
                   />
                 </div>
               )}
@@ -216,39 +219,39 @@ export default function ScriptGenerator({ setCreditsLeft }) {
                   setConversationEnCours(true);
                 }
               }} disabled={isLoading || !initialFanMsg || !canGenerate }>
-                {isLoading ? "Génération..." : "Démarrer la conversation"}
+                {isLoading ? t("scriptgen_loading_btn", language) : t("scriptgen_generate_btn", language)}
               </button>
             </>
           )}
         </div>
           {conversationEnCours && (
             <div className="mb-8">
-              <label className="block text-gray-300 mb-2">Réponse de l'abonné</label>
-              <textarea className="w-full p-3 rounded bg-[#232346] text-gray-200 mb-4" rows={2} value={abonneMsg} onChange={e => setAbonneMsg(e.target.value)} placeholder="Entrez la réponse de l'abonné ici..." />
+              <label className="block text-gray-300 mb-2">{t("scriptgen_step_label", language).replace("{step}", currentStep.toString())}</label>
+              <textarea className="w-full p-3 rounded bg-[#232346] text-gray-200 mb-4" rows={2} value={abonneMsg} onChange={e => setAbonneMsg(e.target.value)} placeholder={t("scriptgen_step_placeholder", language)} />
               <button
                 className="self-start mb-2 px-3 py-1 rounded bg-pink-500 text-white font-bold neon-glow shadow-pink-glow hover:bg-pink-600 transition text-sm"
                 onClick={() => setShowInstructions(v => !v)}
                 type="button"
                 style={{marginBottom: showInstructions ? 0 : 16}}
               >
-                {showInstructions ? "Masquer les instructions" : "Instructions supplémentaires +"}
+                {showInstructions ? t("scriptgen_hide_instructions_btn", language) : t("scriptgen_add_instructions_btn", language)}
               </button>
               {showInstructions && (
                 <div className="mb-2">
-                  <label className="block text-gray-300 mb-2">Instructions supplémentaires</label>
+                  <label className="block text-gray-300 mb-2">{t("scriptgen_instructions_label", language)}</label>
                   <textarea
                     className="w-full p-3 rounded bg-[#232346] text-gray-200"
                     rows={2}
                     value={instructions}
                     onChange={e => setInstructions(e.target.value)}
-                    placeholder="Ex: Le message doit contenir un emoji, rester mystérieux, etc."
+                    placeholder={t("scriptgen_instructions_placeholder", language)}
                   />
                 </div>
               )}
               <div className="w-full flex items-center">
                 {(!canGenerate || creditsLeftState <= 0) ? (
                   <button className="w-full px-4 py-2 rounded bg-yellow-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-yellow-600 transition" onClick={() => window.location.href = "/pricing"} disabled={isLoading || loading}>
-                    {creditsLeftState === 0 ? "Plus de crédits - Mettre à niveau" : "Mise à niveau (accès réservé)"}
+                    {creditsLeftState === 0 ? t("scriptgen_no_credits_btn", language) : t("scriptgen_upgrade_btn", language)}
                   </button>
                 ) : (
                   <button
@@ -259,14 +262,14 @@ export default function ScriptGenerator({ setCreditsLeft }) {
                   >
                     {isLoading ? (
                       <span className="flex items-center justify-center w-full">
-                        <span>Génération</span>
-                        <span className="ml-2 text-blue-200 animate-pulse text-xl" aria-label="Génération en cours">…</span>
+                        <span>{t("scriptgen_loading_btn", language)}</span>
+                        <span className="ml-2 text-blue-200 animate-pulse text-xl" aria-label={t("scriptgen_loading_btn", language)}>…</span>
                       </span>
-                    ) : 'Envoyer'}
+                    ) : t("scriptgen_generate_btn", language)}
                   </button>
                 )}
                 {typeof creditsLeft === "number" && (
-                  <span className="ml-4 text-blue-300 font-bold">Crédits restants : {creditsLeftState}</span>
+                  <span className="ml-4 text-blue-300 font-bold">{t("credits", language)} : {creditsLeftState}</span>
                 )}
               </div>
             </div>
@@ -283,27 +286,27 @@ export default function ScriptGenerator({ setCreditsLeft }) {
                   setCopiedIdx('main');
                   setTimeout(() => setCopiedIdx(null), 1200);
                 }}
-                title="Copier le message"
-              >{copiedIdx === 'main' ? "copié" : "copier"}</button>
+                title={t("scriptgen_copy_btn", language)}
+              >{copiedIdx === 'main' ? t("scriptgen_copied_btn", language) : t("scriptgen_copy_btn", language)}</button>
             </div>
           )}
           {historique.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-2xl font-bold text-pink-400 mb-6 neon-glow">Dialogue</h3>
+              <h3 className="text-2xl font-bold text-pink-400 mb-6 neon-glow">{t("scriptgen_results_title", language)}</h3>
               <div className="flex flex-col gap-2">
                 {historique.map((h, i) => (
                   <React.Fragment key={i}>
                     {h.abonne && (
                       <div className="flex items-start gap-2">
                         <div className="bg-[#232346] rounded-xl px-4 py-2 text-gray-300 max-w-[80%] shadow-blue-glow border-l-4 border-pink-400">
-                          <span className="font-bold text-pink-400 mr-2">Abonné :</span>{h.abonne}
+                          <span className="font-bold text-pink-400 mr-2">{t("scriptgen_step_label", language).replace("{step}", (i+1).toString())}</span>{h.abonne}
                         </div>
                       </div>
                     )}
                     {h.modele && h.modele.trim() !== '' && (
                       <div className="flex items-start gap-2 justify-end">
                         <div className="bg-[#181828] rounded-xl px-4 py-2 text-blue-200 max-w-[80%] shadow-blue-glow border-r-4 border-blue-400 ml-auto flex items-center">
-                          <span className="font-bold text-blue-400 mr-2 text-nowrap ">Modèle :</span>{h.modele}
+                          <span className="font-bold text-blue-400 mr-2 text-nowrap ">{t("scriptgen_variant_label", language).replace("{variant}", (i+1).toString())}</span>{h.modele}
                           <button
                             className={`ml-2 px-2 py-1 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-xs`}
                             onClick={() => {
@@ -311,8 +314,8 @@ export default function ScriptGenerator({ setCreditsLeft }) {
                               setCopiedIdx(i);
                               setTimeout(() => setCopiedIdx(null), 1200);
                             }}
-                            title="Copier le message"
-                          >{copiedIdx === i ? "copié" : "copier"}</button>
+                            title={t("scriptgen_copy_btn", language)}
+                          >{copiedIdx === i ? t("scriptgen_copied_btn", language) : t("scriptgen_copy_btn", language)}</button>
                         </div>
                       </div>
                     )}

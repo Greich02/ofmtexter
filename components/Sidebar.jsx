@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
+import { t } from "../lib/i18n";
 
 const menu = [
-  { icon: "🧠", label: "Générer des réponses rapides", slug: "dashboard/textgenerator" },
-  { icon: "📜", label: "Conversations suivies (Pro) ", slug: "dashboard/scriptgenerator" },
-  { icon: "🎬", label: "Scripts pour contenus médias", slug: "dashboard/mediascriptgenerator" },
-  { icon: "👥", label: "Gérer mon équipe", slug: "dashboard/equipe" },
+  { icon: "🧠", label: "sidebar_quick_answers", slug: "dashboard/textgenerator" },
+  { icon: "📜", label: "sidebar_conversations", slug: "dashboard/scriptgenerator" },
+  { icon: "🎬", label: "sidebar_media_scripts", slug: "dashboard/mediascriptgenerator" },
+  { icon: "👥", label: "sidebar_team", slug: "dashboard/equipe" },
 ];
 
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { language } = useLanguage();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -42,7 +45,7 @@ export default function Sidebar() {
                     onClick={() => router.push(`/${item.slug}`)}
                   >
                     <span className="text-2xl">{item.icon}</span>
-                    {item.label}
+                    {t(item.label, language)}
                   </button>
                 </li>
               );
@@ -77,7 +80,7 @@ export default function Sidebar() {
                     onClick={() => handleMenuClick(item.slug)}
                   >
                     <span className="text-2xl">{item.icon}</span>
-                    {item.label}
+                    {t(item.label, language)}
                   </button>
                 </li>
               );

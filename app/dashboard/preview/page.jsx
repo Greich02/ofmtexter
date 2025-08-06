@@ -1,6 +1,8 @@
 'use client'
 import { useSearchParams, useRouter } from "next/navigation";
 import React, { useState, useEffect, Suspense } from "react";
+import { useLanguage } from "../../../contexts/LanguageContext.jsx";
+import { t } from "../../../lib/i18n";
 import Topbar from "../../../components/Topbar.jsx";
 import Footer from "../../../components/Footer.jsx";
 import Navbar from "../../../components/Navbar.jsx";
@@ -16,6 +18,7 @@ function BuyCreditsPageContent() {
   const [plans, setPlans] = useState([]);
   const [plan, setPlan] = useState(null);
   const { data: session } = useSession();
+  const { language } = useLanguage();
 
   // Récupère les plans depuis l'API
   useEffect(() => {
@@ -63,13 +66,13 @@ function BuyCreditsPageContent() {
         <div className="flex-1 flex items-center justify-center px-4 py-12 bg-[#181828]">
           <div className="w-full max-w-xl bg-[#232346] rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-500/30">
             {!plan ? (
-              <div className="text-center text-white py-12">Chargement du plan...</div>
+              <div className="text-center text-white py-12">{t("preview_loading_plan", language)}</div>
             ) : (
               <React.Fragment>
-                <h1 className="text-3xl font-extrabold text-blue-400 mb-2 text-left">Aperçu du plan</h1>
+                <h1 className="text-3xl font-extrabold text-blue-400 mb-2 text-left">{t("preview_title", language)}</h1>
                 <div className="mb-4">
                   <span className="text-blue-400 font-bold text-xl">{plan.name}</span>
-                  <span className="ml-2 text-gray-400">{annual ? "(Annuel)" : "(Mensuel)"}</span>
+                  <span className="ml-2 text-gray-400">{annual ? t("preview_annual", language) : t("preview_monthly", language)}</span>
                 </div>
                 <ul className="mb-6 text-gray-300 text-base space-y-2">
                   {plan.features.map(f => (
@@ -79,27 +82,27 @@ function BuyCreditsPageContent() {
                   ))}
                 </ul>
                 <div className="mb-4">
-                  <span className="text-blue-400 font-bold">{plan.credits} crédits/mois</span>
+                  <span className="text-blue-400 font-bold">{plan.credits} {t("preview_credits_per_month", language)}</span>
                 </div>
                 <div className="flex gap-4 mb-6">
                   <button
                     className={`px-4 py-2 rounded-lg font-bold text-center transition ${annual ? 'bg-blue-500 text-white' : 'bg-[#232346] text-blue-400'}`}
                     onClick={() => setAnnual(true)}
-                  >Annuel (-20%)</button>
+                  >{t("preview_annual_btn", language)}</button>
                   <button
                     className={`px-4 py-2 rounded-lg font-bold text-center transition ${!annual ? 'bg-blue-500 text-white' : 'bg-[#232346] text-blue-400'}`}
                     onClick={() => setAnnual(false)}
-                  >Mensuel</button>
+                  >{t("preview_monthly_btn", language)}</button>
                 </div>
                 <div className="flex gap-4 mb-6">
                   <button
                     className={`px-4 py-2 rounded-lg font-bold text-center transition ${payment === 'crypto' ? 'bg-blue-500 text-white' : 'bg-[#232346] text-blue-400'}`}
                     onClick={() => setPayment('crypto')}
-                  >Crypto</button>
+                  >{t("preview_crypto_btn", language)}</button>
                   <button
                     className={`px-4 py-2 rounded-lg font-bold text-center transition ${payment === 'paypal' ? 'bg-blue-500 text-white' : 'bg-[#232346] text-blue-400'}`}
                     onClick={() => setPayment('paypal')} disabled
-                  >Paypal <span className="text-sm text-amber-300 italic" >(Indisponible) </span> </button>
+                  >{t("preview_paypal_btn", language)} <span className="text-sm text-amber-300 italic">({t("preview_unavailable", language)})</span> </button>
                 </div>
               </React.Fragment>
             )}
@@ -110,30 +113,30 @@ function BuyCreditsPageContent() {
           {!plan ? null : (
             <React.Fragment>
               <div className="mb">
-                <h2 className="text-xl font-bold text-blue-400 mb-4">Récapitulatif</h2>
+                <h2 className="text-xl font-bold text-blue-400 mb-4">{t("preview_summary", language)}</h2>
                 <div className="flex flex-col gap-2 text-gray-300">
                   <div className="flex justify-between">
-                    <span>Plan</span>
+                    <span>{t("preview_plan_label", language)}</span>
                     <span className="font-bold text-blue-400">{plan.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Crédits/mois</span>
+                    <span>{t("preview_credits_label", language)}</span>
                     <span className="font-bold text-blue-400">{plan.credits}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Durée</span>
-                    <span className="font-bold text-blue-400">{annual ? "12 mois" : "1 mois"}</span>
+                    <span>{t("preview_duration_label", language)}</span>
+                    <span className="font-bold text-blue-400">{annual ? t("preview_annual_duration", language) : t("preview_monthly_duration", language)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Moyen de paiement</span>
-                    <span className="font-bold text-blue-400">{payment === "paypal" ? "Paypal" : "Crypto"}</span>
+                    <span>{t("preview_payment_label", language)}</span>
+                    <span className="font-bold text-blue-400">{payment === "paypal" ? t("preview_paypal_label", language) : t("preview_crypto_label", language)}</span>
                   </div>
                 </div>
               </div>
               <div className="mt-5">
                 <div className="flex flex-col gap-2 mb-4">
                   <div className="flex justify-between text-lg font-bold text-white ">
-                    <span>Sous-total</span>
+                    <span>{t("preview_subtotal_label", language)}</span>
                     <span>
                       {annual
                         ? `${(plan.priceYear / 12).toFixed(2)} € x 12 = ${plan.priceYear.toFixed(2)} €`
@@ -141,7 +144,7 @@ function BuyCreditsPageContent() {
                     </span>
                   </div>
                   <div className="flex justify-between text-base text-white ">
-                    <span>Frais ({payment === "paypal" ? "2% Paypal" : "1% Crypto"})</span>
+                    <span>{t("preview_fee_label", language, { fee: payment === "paypal" ? "2% Paypal" : "1% Crypto" })}</span>
                     <span>
                       {annual
                         ? `${((plan.priceYear * (payment === "paypal" ? 0.02 : 0.01))).toFixed(2)} €`
@@ -149,7 +152,7 @@ function BuyCreditsPageContent() {
                     </span>
                   </div>
                   <div className="flex justify-between text-xl font-extrabold text-blue-400">
-                    <span>Total TTC</span>
+                    <span>{t("preview_total_label", language)}</span>
                     <span>
                       {annual
                         ? `${(plan.priceYear * (1 + (payment === "paypal" ? 0.02 : 0.01))).toFixed(2)} €`
@@ -178,14 +181,14 @@ function BuyCreditsPageContent() {
                     if (data.payUrl) {
                       window.open(data.payUrl, "_blank");
                     } else {
-                      alert("Erreur lors de la création du paiement");
+                      alert(t("preview_payment_error", language));
                     }
                   }}
-                >Procéder au paiement</button>
+                >{t("preview_pay_btn", language)}</button>
                 <button
                   className="w-full px-6 py-3 rounded-xl bg-[#232346] text-blue-400 font-bold hover:bg-blue-500 hover:text-white"
                   onClick={() => router.push('/pricing')}
-                >Revenir aux tarifs</button>
+                >{t("preview_back_to_pricing_btn", language)}</button>
               </div>
             </React.Fragment>
           )}

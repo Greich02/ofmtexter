@@ -1,6 +1,8 @@
 'use client'
 import React, { useState } from "react";
 import useUserSession from "./useUserSession";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../lib/i18n";
 // Placeholders dynamiques pour chaque type d'étape
 const stepDescriptionPlaceholders = {
   "Chauffe": "Ex: Décris une scène ou une ambiance excitante liée au média à venir (ex : 'je suis nue sous la douche, j’ai pensé à toi…'), ou à la précédente phrase de sexualisation. Donne des détails sensoriels pour nourrir l’imaginaire.",
@@ -19,6 +21,7 @@ const stepTypes = [
 ];
 
 export default function MediaScriptGenerator({ setCreditsLeft }) {
+  const { language } = useLanguage();
 
   const { user, loading } = useUserSession();
   const hasMediaScript = user?.planAccess?.mediaScript;
@@ -31,12 +34,11 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
     }
   }, [creditsLeftState, setCreditsLeft]);
   const helpTexts = {
-        main: `Structure un script média complet en plusieurs étapes. Pour chaque action (envoi de photo, vocal, etc.), décris le contexte puis génère le message associé. Parfait pour planifier des séquences média efficaces.`
-
+    main: t("mediascriptgen_help_main", language)
   };
   const [scriptName, setScriptName] = useState("");
   const [steps, setSteps] = useState([
-    { name: "", type: stepTypes[0], desc: "" }
+    { name: "", type: t("mediascriptgen_step_type_chauffe", language), desc: "" }
   ]);
   const [generated, setGenerated] = useState([]);
   const handleStepChange = (idx, field, value) => {
@@ -47,7 +49,7 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
   };
 
   const addStep = () => {
-    setSteps([...steps, { name: "", type: stepTypes[0], desc: "" }]);
+    setSteps([...steps, { name: "", type: t("mediascriptgen_step_type_chauffe", language), desc: "" }]);
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -87,12 +89,12 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
   return (
     <div className="bg-[#181828] rounded-2xl p-8 shadow-lg max-w-3xl mx-auto mb-8 mt-8">
       <div className="relative flex items-center mb-6">
-        <h2 className="text-2xl font-bold text-white flex-1">Générateur de Script pour médias</h2>
+        <h2 className="text-2xl font-bold text-white flex-1">{t("mediascriptgen_title", language)}</h2>
         <div className="ml-auto relative group select-none" style={{marginLeft: 'auto'}}>
           <span
             className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-blue-400 bg-[#181f3a] text-blue-300 text-xs font-bold cursor-help transition-all duration-150 shadow-none group-hover:bg-blue-500 group-hover:text-white"
             tabIndex={0}
-            aria-label="Aide Script pour médias"
+            aria-label={t("mediascriptgen_help_aria", language)}
           >
             ?
           </span>
@@ -105,44 +107,44 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
         </div>
       </div>
       <div className="mb-6">
-        <label className="block text-gray-300 mb-2">Nom du script</label>
-        <input className="w-full p-3 rounded bg-[#232346] text-gray-200 mb-4" value={scriptName} onChange={e => setScriptName(e.target.value)} placeholder="Ex: Séquence photo premium" />
+        <label className="block text-gray-300 mb-2">{t("mediascriptgen_script_name_label", language) || "Nom du script"}</label>
+        <input className="w-full p-3 rounded bg-[#232346] text-gray-200 mb-4" value={scriptName} onChange={e => setScriptName(e.target.value)} placeholder={t("mediascriptgen_script_name_placeholder", language) || "Ex: Séquence photo premium"} />
       </div>
       <div className="mb-6">
-        <h3 className="text-lg font-bold text-white mb-4">Étapes du script</h3>
+        <h3 className="text-lg font-bold text-white mb-4">{t("mediascriptgen_steps_title", language) || "Étapes du script"}</h3>
         {steps.map((step, idx) => (
           <div key={idx} className="bg-[#232346] rounded-lg p-4 mb-4 flex flex-col gap-2">
-            <label className="text-gray-300">Nom de l’étape</label>
-            <input className="p-2 rounded bg-[#181828] text-gray-200" value={step.name} onChange={e => handleStepChange(idx, "name", e.target.value)} placeholder="Nom de l’étape..." />
-            <label className="text-gray-300">Type d’étape</label>
+            <label className="text-gray-300">{t("mediascriptgen_step_name_label", language) || "Nom de l’étape"}</label>
+            <input className="p-2 rounded bg-[#181828] text-gray-200" value={step.name} onChange={e => handleStepChange(idx, "name", e.target.value)} placeholder={t("mediascriptgen_step_name_placeholder", language) || "Nom de l’étape..."} />
+            <label className="text-gray-300">{t("mediascriptgen_media_type_label", language)}</label>
             <select className="p-2 rounded bg-[#181828] text-gray-200" value={step.type} onChange={e => handleStepChange(idx, "type", e.target.value)}>
-              {stepTypes.map((type, i) => <option key={type + '-' + i}>{type}</option>)}
+              {stepTypes.map((type, i) => <option key={type + '-' + i}>{t(`mediascriptgen_step_type_${type.toLowerCase().replace(/\s+/g, '_')}`, language) || type}</option>)}
             </select>
-            <label className="text-gray-300">Description</label>
+            <label className="text-gray-300">{t("mediascriptgen_step_desc_label", language) || "Description"}</label>
             <textarea
               className="p-2 rounded bg-[#181828] text-gray-200"
               value={step.desc}
               onChange={e => handleStepChange(idx, "desc", e.target.value)}
-              placeholder={stepDescriptionPlaceholders[step.type] || "Décrivez ce que vous souhaitez obtenir..."}
+              placeholder={t(`mediascriptgen_step_desc_placeholder_${step.type.toLowerCase().replace(/\s+/g, '_')}`, language) || "Décrivez ce que vous souhaitez obtenir..."}
             />
           </div>
         ))}
-        <button className="px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition" onClick={addStep}>+ Ajouter une étape</button>
+        <button className="px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition" onClick={addStep}>{t("mediascriptgen_add_step_btn", language)}</button>
       </div>
       {(!canGenerate || creditsLeftState === 0) ? (
         <button className="w-full px-4 py-2 rounded bg-yellow-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-yellow-600 transition" onClick={() => window.location.href = "/pricing"} disabled={isLoading || loading}>
-                    {creditsLeftState === 0 ? "Plus de crédits - Mettre à niveau" : "Mise à niveau (accès réservé)"}
+                    {creditsLeftState === 0 ? t("mediascriptgen_no_credits_btn", language) : t("mediascriptgen_upgrade_btn", language)}
         </button>
       ) : (
-        <button className="w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition mb-6" onClick={generateScript} disabled={isLoading || !canGenerate}>Générer le script</button>
+        <button className="w-full px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition mb-6" onClick={generateScript} disabled={isLoading || !canGenerate}>{t("mediascriptgen_generate_btn", language)}</button>
       )}
 
       {isLoading && (
-        <div className="mb-6 text-blue-400 font-bold animate-pulse">Génération du script en cours...</div>
+        <div className="mb-6 text-blue-400 font-bold animate-pulse">{t("mediascriptgen_loading_btn", language)}</div>
       )}
       {(generated.length > 0 || currentStepIdx !== null) && (
         <div className="mb-8">
-          <h3 className="text-lg font-bold text-white mb-4">Étape générée : <span className="text-blue-400">{generated[currentStepIdx].stepName}</span></h3>
+          <h3 className="text-lg font-bold text-white mb-4">{t("mediascriptgen_results_title", language)} : <span className="text-blue-400">{generated[currentStepIdx].stepName}</span></h3>
           <div className="flex items-center gap-2 mb-4">
             <div className="flex-1 bg-[#232346] rounded-lg px-4 py-3 text-blue-200 font-mono shadow-blue-glow border border-blue-500 select-all overflow-x-auto">
               {generated[currentStepIdx].content}
@@ -150,8 +152,8 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
             <button
               className="ml-2 px-3 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition"
               onClick={() => {navigator.clipboard.writeText(generated[currentStepIdx].content)}}
-              title="Copier le message"
-            >📋</button>
+              title={t("mediascriptgen_copy_btn", language)}
+            >{t("mediascriptgen_copy_btn", language)}</button>
           </div>
           <div className="flex gap-2">
             {generated.map((step, i) => (
@@ -159,7 +161,7 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
                 key={i}
                 className={`px-3 py-1 rounded font-bold text-xs transition ${i === currentStepIdx ? "bg-blue-500 text-white neon-glow" : "bg-[#232346] text-blue-400 hover:bg-blue-500 hover:text-white"}`}
                 onClick={() => { setCurrentStepIdx(i); setCopiableMsg(step.content); }}
-              >{step.stepName || `Étape ${i + 1}`}</button>
+              >{step.stepName || t("mediascriptgen_variant_label", language).replace("{variant}", (i + 1).toString())}</button>
             ))}
           </div>
         </div>

@@ -1,5 +1,7 @@
-'use client'
-import { useState } from "react";
+
+import React, { useState } from "react";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
+import { t } from "../lib/i18n";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Navbar from "./Navbar";
@@ -9,6 +11,7 @@ export default function SignupClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { language } = useLanguage();
 
   const handleGoogleSignup = async () => {
     setIsLoading(true);
@@ -22,7 +25,7 @@ export default function SignupClient() {
       });
 
       if (result?.error) {
-        setError('Erreur lors de la création du compte');
+        setError(t('signup_error', language));
         console.error('Signup error:', result.error);
       } else if (result?.ok) {
         // Succès : redirection vers le dashboard
@@ -30,7 +33,7 @@ export default function SignupClient() {
         router.push('/dashboard');
       }
     } catch (err) {
-      setError('Une erreur inattendue s\'est produite');
+      setError(t('signup_unexpected_error', language));
       console.error('Signup error:', err);
     }
     
@@ -42,7 +45,7 @@ export default function SignupClient() {
       <Navbar />
       <div className="flex-1 flex items-center justify-center pt-24 pb-16">
         <div className="bg-[#181828] rounded-2xl p-8 shadow-lg w-full max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">Créer un compte</h2>
+          <h2 className="text-2xl font-bold text-white mb-6 text-center">{t('signup_title', language)}</h2>
           
           {error && (
             <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded mb-4">
@@ -51,7 +54,7 @@ export default function SignupClient() {
           )}
 
           <div className="flex justify-center mb-6">
-            <img src="/images/signup-illustration.jpg" alt="Inscription Illustration" className="h-40 object-contain" />
+            <img src="/images/signup-illustration.jpg" alt={t('signup_illustration_alt', language)} className="h-40 object-contain" />
           </div>
 
           <button
@@ -69,15 +72,15 @@ export default function SignupClient() {
                   <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                Créer un compte avec Google
+                {t('signup_google_btn', language)}
               </>
             )}
           </button>
 
           <p className="text-gray-400 text-sm text-center mt-6">
-            Déjà un compte ?{' '}
+            {t('signup_already_account', language)}{' '}
             <a href="/login" className="text-blue-400 hover:text-blue-300 font-medium">
-              Se connecter
+              {t('signup_login_btn', language)}
             </a>
           </p>
         </div>

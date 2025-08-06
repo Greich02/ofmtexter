@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
+import { t } from "../lib/i18n";
 
 function AIDashboardAnimation() {
-  const prompt = "Tu prévois quoi ce soir ?";
+  const { language } = useLanguage();
+  const prompt = t("hero_prompt", language);
   const answers = [
-    "Ce soir ? Je pourrais te surprendre... 😏",
-    "J'ai quelques idées très coquines en tête... Tu veux en savoir plus ?",
-    "Je vais bien, un peu taquine aujourd'hui, et toi ? 😏",
-    "Je te réserve une surprise... Tu es prêt ? 🔥",
+    t("hero_answer1", language),
+    t("hero_answer2", language),
+    t("hero_answer3", language),
+    t("hero_answer4", language),
   ];
   const [current, setCurrent] = useState(0);
   const [displayed, setDisplayed] = useState("");
@@ -44,11 +47,11 @@ function AIDashboardAnimation() {
         </div>
       </div>
       <div className="flex-1 w-full px-4 md:px-6 py-3 md:py-4 flex flex-col justify-center">
-        <div className="text-xs text-blue-200 font-mono mb-2">Prompt :</div>
+        <div className="text-xs text-blue-200 font-mono mb-2">{t("hero_prompt_label", language)}</div>
         <div className="bg-[#181f3a] rounded-lg px-3 py-2 text-blue-100 font-mono text-xs md:text-sm shadow-blue-glow border border-blue-500 mb-4 animate-fade-in">
           {prompt}
         </div>
-        <div className="text-xs text-blue-200 font-mono mb-2">Réponse IA :</div>
+        <div className="text-xs text-blue-200 font-mono mb-2">{t("hero_answer_label", language)}</div>
         <div className="bg-[#232346] rounded-lg px-3 py-2 text-blue-100 font-mono text-sm md:text-base shadow-blue-glow border border-blue-500 min-h-[32px] animate-fade-in">
           <span className="ai-cursor">{displayed}<span className="animate-blink">|</span></span>
         </div>
@@ -67,20 +70,21 @@ function AIDashboardAnimation() {
 
 export default function HeroSection() {
   const { data: session } = useSession();
+  const { language } = useLanguage();
   return (
     <section className="pt-16 pb-20 px-4 md:px-10 flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12 bg-gradient-to-b from-black via-gray-900 to-gray-950">
       <div className="max-w-xl text-center lg:text-left">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 flex flex-col">
-          <span>L'IA au service des agences OFM.</span>
-          <span className="text-blue-400 neon-glow mt-3 md:mt-5">Générez des messages performants en un clic.</span>
+          <span>{t("hero_title1", language)}</span>
+          <span className="text-blue-400 neon-glow mt-3 md:mt-5">{t("hero_title2", language)}</span>
         </h1>
         <p className="text-base md:text-lg text-gray-300 mb-8">
-          OfmPilot vous aide à automatiser vos conversations, scripts et ventes avec une IA fine-tunée pour les modèles, chateurs et managers.
+          {t("hero_desc", language)}
         </p>
         {!session?.user && (
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <a href="/signup" className="px-6 py-3 rounded-lg bg-blue-500 text-white font-bold shadow-blue-glow neon-glow hover:bg-blue-600 transition text-center">Créer un compte gratuitement</a>
-            <a href="/login" className="px-6 py-3 rounded-lg bg-white text-blue-500 font-bold border border-blue-400 hover:bg-blue-50 transition text-center">Se connecter avec Google</a>
+            <a href="/signup" className="px-6 py-3 rounded-lg bg-blue-500 text-white font-bold shadow-blue-glow neon-glow hover:bg-blue-600 transition text-center">{t("hero_signup_btn", language)}</a>
+            <a href="/login" className="px-6 py-3 rounded-lg bg-white text-blue-500 font-bold border border-blue-400 hover:bg-blue-50 transition text-center">{t("hero_login_btn", language)}</a>
           </div>
         )}
       </div>
