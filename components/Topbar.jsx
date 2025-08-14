@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../lib/i18n";
 import { useSession, signOut, SessionProvider } from "next-auth/react";
 
 const Topbar = ({ showDashboardButton, creditsLeft }) => {
@@ -17,6 +19,7 @@ function TopbarContent({ showDashboardButton, creditsLeft }) {
   
   // Si creditsLeft est passé en prop, on l'affiche, sinon on prend la valeur session
   const credits = typeof creditsLeft === "number" ? creditsLeft : (typeof user?.credits === "number" ? user.credits : 0);
+    const { language } = useLanguage();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -69,11 +72,11 @@ function TopbarContent({ showDashboardButton, creditsLeft }) {
       {/* Menu desktop */}
       <div className="hidden md:flex items-center gap-6">
         {typeof showDashboardButton !== 'undefined' && showDashboardButton && (
-          <a href="/dashboard" className="px-3 py-1 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-sm">Dashboard</a>
+          <a href="/dashboard" className="px-3 py-1 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-sm">{t("topbar_dashboard_btn", language) || "Dashboard"}</a>
         )}
         <div className="flex items-center gap-2 bg-[#232346] px-3 py-1 rounded-lg text-blue-400 font-bold shadow-blue-glow">
           <span>🔢</span>
-          <span>{credits} crédits</span>
+          <span>{credits} {t("topbar_credits_label", language) || "crédits"}</span>
         </div>
         <div className="relative group">
           {user?.avatar ? (
@@ -88,8 +91,8 @@ function TopbarContent({ showDashboardButton, creditsLeft }) {
             </button>
           )}
         </div>
-        <a href="/pricing" className="px-3 py-1 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-sm">Mettre à niveau</a>
-        <button onClick={() => signOut({ callbackUrl: "/login" })} className="px-3 py-1 rounded bg-[#232346] text-gray-200 font-bold hover:text-red-400 transition text-sm">🚪 Se déconnecter</button>
+  <a href="/pricing" className="px-3 py-1 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-sm">{t("topbar_upgrade_btn", language) || "Mettre à niveau"}</a>
+  <button onClick={() => signOut({ callbackUrl: "/login" })} className="px-3 py-1 rounded bg-[#232346] text-gray-200 font-bold hover:text-red-400 transition text-sm">🚪 {t("topbar_logout_btn", language) || "Se déconnecter"}</button>
       </div>
 
 {/* Menu mobile + overlay */}  

@@ -112,14 +112,14 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
             <input className="p-2 rounded bg-[#181828] text-gray-200" value={step.name} onChange={e => handleStepChange(idx, "name", e.target.value)} placeholder={t("mediascriptgen_step_name_placeholder", language) || "Nom de l’étape..."} />
             <label className="text-gray-300">{t("mediascriptgen_media_type_label", language)}</label>
             <select className="p-2 rounded bg-[#181828] text-gray-200" value={step.type} onChange={e => handleStepChange(idx, "type", e.target.value)}>
-              {stepTypes.map((type, i) => <option key={type + '-' + i}>{t(`mediascriptgen_step_type_${type.toLowerCase().replace(/\s+/g, '_')}`, language) || type}</option>)}
+              {stepTypes.map((type, i) => <option key={type + '-' + i}>{t(`mediascriptgen_step_type_${type.toLowerCase().replace(/\s+/g, '_').replace(/-/g, '_').normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`, language) || type}</option>)}
             </select>
             <label className="text-gray-300">{t("mediascriptgen_step_desc_label", language) || "Description"}</label>
             <textarea
               className="p-2 rounded bg-[#181828] text-gray-200 placeholder:text-base"
               value={step.desc}
               onChange={e => handleStepChange(idx, "desc", e.target.value)}
-              placeholder={t(`mediascriptgen_step_desc_placeholder_${step.type.toLowerCase().replace(/\s+/g, '_')}`, language) || "Décrivez ce que vous souhaitez obtenir..."}
+              placeholder={t(`mediascriptgen_step_desc_placeholder_${step.type.toLowerCase().replace(/\s+/g, '_').replace(/-/g, '_').normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`, language) || "Décrivez ce que vous souhaitez obtenir..."}
             />
           </div>
         ))}
