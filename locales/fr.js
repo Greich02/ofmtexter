@@ -1,4 +1,5 @@
 export default {
+  "mediascriptgen_step_desc_placeholder_fidelisation_post_script": "Ex: Exprime comme la modèle a apprécié ce moment et aimerait recommencer.",
   "topbar_dashboard_btn": "Tableau de bord",
   "topbar_credits_label": "crédits",
   "topbar_upgrade_btn": "Mettre à niveau",
