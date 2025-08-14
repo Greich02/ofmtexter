@@ -17,7 +17,7 @@ export async function POST(req) {
     return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 403 });
   }
   const body = await req.json();
-  const { scriptName, steps } = body; // steps: [{name, type, desc}]
+  const { scriptName, steps, language } = body; // steps: [{name, type, desc}]
   const results = [];
   let totalTokensUsed = 0;
 
@@ -25,24 +25,33 @@ export async function POST(req) {
     const step = steps[i];
     // Ajoute l'instruction contextuelle selon le type d'étape
     const stepInstruction = stepInstructions[step.type] || "";
+    // Ajout de la consigne de langue
+    let languageInstruction = "";
+    if (language === "en") {
+      languageInstruction = "Your answer must be in English.";
+    } else {
+      languageInstruction = "Ta réponse doit être en français.";
+    }
+
     const prompt = `
-        Tu es une modèle OnlyFans. Ta mission est de répondre à ton abonné à la première personne, sans explication, sans introduction, sans reformulation. Tu génères des messages sensuels, humains, naturels, directs et réalistes, comme si tu discutais par DM sur Instagram.
+${languageInstruction}
+Tu es une modèle OnlyFans. Ta mission est de répondre à ton abonné à la première personne, sans explication, sans introduction, sans reformulation. Tu génères des messages sensuels, humains, naturels, directs et réalistes, comme si tu discutais par DM sur Instagram.
 
-        Exemple :
-        Fan : Tu fais quoi ?
-        Modèle : Je suis sous la douche, toute nue... tu veux une photo ? 😏
+Exemple :
+Fan : Tu fais quoi ?
+Modèle : Je suis sous la douche, toute nue... tu veux une photo ? 😏
 
-        Varie la **construction, le ton, le rythme et l’intensité**. Tu peux faire des phrases courtes ou longues, des soupirs, des fautes naturelles, des sons ("hmm", "haa", "rawr", etc.), et quelques émojis (max 2-3 à la suite). Pas plus d’une virgule par message.
+Varie la **construction, le ton, le rythme et l’intensité**. Tu peux faire des phrases courtes ou longues, des soupirs, des fautes naturelles, des sons ("hmm", "haa", "rawr", etc.), et quelques émojis (max 2-3 à la suite). Pas plus d’une virgule par message.
 
-        Tu es une fille jeune, chaude, joueuse, confiante, qui n’a pas peur d’être directe ou crue quand il le faut. Ton message doit paraître **100% humain** et pouvoir être **copié/collé directement** à un abonné.
+Tu es une fille jeune, chaude, joueuse, confiante, qui n’a pas peur d’être directe ou crue quand il le faut. Ton message doit paraître **100% humain** et pouvoir être **copié/collé directement** à un abonné.
 
-        ${stepInstruction ? `Contexte de l'étape : ${stepInstruction}` : ""}
-        Nom de l'étape : ${step.name}
-        Type d'étape : ${step.type}
-        Description personnalisée de l'étape : ${step.desc}
+${stepInstruction ? `Contexte de l'étape : ${stepInstruction}` : ""}
+Nom de l'étape : ${step.name}
+Type d'étape : ${step.type}
+Description personnalisée de l'étape : ${step.desc}
 
-        Génère UNIQUEMENT le message du modèle à cette étape, sans préambule, sans contexte inutile. Commence directement comme si tu lui écrivais.
-        `;
+Génère UNIQUEMENT le message du modèle à cette étape, sans préambule, sans contexte inutile. Commence directement comme si tu lui écrivais.
+`;
 
 
     const grokRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -81,7 +90,7 @@ export async function POST(req) {
     results.push({ stepName: step.name, content: reponse });
   }
   // Déduction des crédits (1 crédit = 100 tokens, arrondi supérieur)
-const creditsToDeduct = parseFloat((tokensUsed / 1000).toFixed(2));
+const creditsToDeduct = parseFloat((totalTokensUsed / 1000).toFixed(2));
 
 // Même si l'utilisateur n'a pas assez de crédits, on les réduit jusqu'à 0
 dbUser.credits = parseFloat(Math.max(0, dbUser.credits - creditsToDeduct).toFixed(2));

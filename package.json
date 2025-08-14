@@ -11,12 +11,14 @@
   "dependencies": {
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
+    "input": "^1.0.1",
     "mongoose": "^8.16.4",
     "next": "15.4.1",
     "next-auth": "^4.24.11",
     "postcss": "^8.5.6",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "telegram": "^2.26.22"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",

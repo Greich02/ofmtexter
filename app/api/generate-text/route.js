@@ -17,12 +17,21 @@ export async function POST(req) {
     return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 403 });
   }
   const body = await req.json();
-  const { exchanges, tone, objectif, count, instructions } = body;
+  const { exchanges, tone, objectif, count, instructions, language } = body;
   let results = [];
 
   const history = exchanges.map((ex, i) => `Fan: ${ex.fan}\nModèle: ${ex.model}`).join("\n");
 
+  // Ajout de la consigne de langue
+  let languageInstruction = "";
+  if (language === "en") {
+    languageInstruction = "Your answer must be in English.";
+  } else {
+    languageInstruction = "Ta réponse doit être en français.";
+  }
+
   const prompt = `
+${languageInstruction}
 Tu es une modèle OnlyFans. Ta mission est de répondre à ton abonné dans le contexte d'une conversation, à la première personne, sans aucune explication, sans introduction, sans reformulation de la consigne. Ta réponse doit être directement copiable/collable comme message du modèle.
 
 Génère ${count} variantes dans un style naturel, varié, parfois cru, avec une vraie voix humaine.

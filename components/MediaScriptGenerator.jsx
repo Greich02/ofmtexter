@@ -4,13 +4,7 @@ import useUserSession from "./useUserSession";
 import { useLanguage } from "../contexts/LanguageContext";
 import { t } from "../lib/i18n";
 // Placeholders dynamiques pour chaque type d'étape
-const stepDescriptionPlaceholders = {
-  "Chauffe": "Ex: Décris une scène ou une ambiance excitante liée au média à venir (ex : 'je suis nue sous la douche, j’ai pensé à toi…'), ou à la précédente phrase de sexualisation. Donne des détails sensoriels pour nourrir l’imaginaire.",
-  "Média": "Ex: Voici ce que contient le média : la modèle est nue sur le lit, ne porte qu'une culotte mais se cache les seins avec une main. Décris le média pour donner envie et précise que tout ça est nouveau pour elle.",
-  "Post-média": "Ex: Décris comment la modèle se sent après l’envoi du média (ex : 'elle est toute excitée à l’idée qu’il l’ait vue nue, veut savoir ce qu’il en a pensé').",
-  "Sexualisation post-media": "Ex: Donne à l'abonné une idée de ce qui pourrait se passer ensuite dans ce scénario pour relancer l’excitation (ex : 'elle lui chuchote ce qu’elle aimerait lui faire s’il était là maintenant').",
-  "Fidélisation post script": "Ex: Exprime comme la modèle a apprécié ce moment et aimerais remettre ça plus souvent avec lui."
-};
+// Les placeholders sont traduits via t et les clés mediascriptgen_step_desc_placeholder_<type>
 
 const stepTypes = [
   "Chauffe",
@@ -65,7 +59,7 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
       const res = await fetch("/api/mediascript", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scriptName, steps })
+        body: JSON.stringify({ scriptName, steps, language })
       });
       const data = await res.json();
       setGenerated(data.results || []);
@@ -108,7 +102,7 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
       </div>
       <div className="mb-6">
         <label className="block text-gray-300 mb-2">{t("mediascriptgen_script_name_label", language) || "Nom du script"}</label>
-        <input className="w-full p-3 rounded bg-[#232346] text-gray-200 mb-4" value={scriptName} onChange={e => setScriptName(e.target.value)} placeholder={t("mediascriptgen_script_name_placeholder", language) || "Ex: Séquence photo premium"} />
+  <input className="w-full p-3 rounded bg-[#232346] text-gray-200 mb-4" value={scriptName} onChange={e => setScriptName(e.target.value)} placeholder={t("mediascriptgen_script_name_placeholder", language) || "Ex: Séquence photo premium"} />
       </div>
       <div className="mb-6">
         <h3 className="text-lg font-bold text-white mb-4">{t("mediascriptgen_steps_title", language) || "Étapes du script"}</h3>
@@ -122,7 +116,7 @@ export default function MediaScriptGenerator({ setCreditsLeft }) {
             </select>
             <label className="text-gray-300">{t("mediascriptgen_step_desc_label", language) || "Description"}</label>
             <textarea
-              className="p-2 rounded bg-[#181828] text-gray-200"
+              className="p-2 rounded bg-[#181828] text-gray-200 placeholder:text-base"
               value={step.desc}
               onChange={e => handleStepChange(idx, "desc", e.target.value)}
               placeholder={t(`mediascriptgen_step_desc_placeholder_${step.type.toLowerCase().replace(/\s+/g, '_')}`, language) || "Décrivez ce que vous souhaitez obtenir..."}

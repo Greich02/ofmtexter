@@ -105,7 +105,7 @@ export default function ScriptGenerator({ setCreditsLeft }) {
       const res = await fetch("/api/scriptstep", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objectif, historique: histLimited, tone, pseudo, instructions: fullInstructions })
+  body: JSON.stringify({ objectif, historique: histLimited, tone, pseudo, instructions: fullInstructions, language })
       });
       const data = await res.json();
       const reply = data.reponse || "";

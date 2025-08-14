@@ -19,7 +19,7 @@ export async function POST(req) {
   }
 
   const body = await req.json();
-  const { objectif, historique, etape, totalEtapes, instructions, tone, pseudo } = body;
+  const { objectif, historique, etape, totalEtapes, instructions, tone, pseudo, language } = body;
 
   let dernierFan = "";
   if (historique && historique.length > 0) {
@@ -35,7 +35,16 @@ export async function POST(req) {
   ];
   const persona = personas[Math.floor(Math.random() * personas.length)];
 
+  // Ajout de la consigne de langue
+  let languageInstruction = "";
+  if (language === "en") {
+    languageInstruction = "Your answer must be in English.";
+  } else {
+    languageInstruction = "Ta réponse doit être en français.";
+  }
+
   const prompt = `
+${languageInstruction}
 Tu es une modèle OnlyFans. Tu discutes avec tes abonnés en messages privés. Ta mission est de répondre à ton fan comme dans une vraie conversation sur WhatsApp ou Instagram.
 
 Tu parles à la première personne. Pas d'explication, pas de consigne visible. Tu écris un message naturel, vivant, varié. Ta réponse doit être directement copiable/collable comme si tu l'avais écrite spontanément.

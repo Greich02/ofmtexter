@@ -12,8 +12,8 @@ export default function LanguageDropdown() {
         className="bg-[#232346] text-blue-400 font-bold px-3 py-2 rounded-lg border border-blue-400 focus:outline-none"
         aria-label="Choisir la langue"
       >
-        <option value="fr">Français</option>
         <option value="en">English</option>
+        <option value="fr">Français</option>
       </select>
     </div>
   );

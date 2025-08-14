@@ -7,30 +7,30 @@ import objectiveInstructions from "../lib/objectiveInstructions";
 import toneInstructions from "../lib/toneInstructions";
 
 const tones = [
-  "Neutre",
-  "Sexuel",
-  "Aguicheur",
-  "Tendre",
-  "Taquin",
-  "Dominant",
-  "Chouineur",
-  "Drôle",
-  "Fou",
-  "Romantique",
+  "tone_neutral",
+  "tone_sexual",
+  "tone_flirty",
+  "tone_tender",
+  "tone_teasing",
+  "tone_dominant",
+  "tone_whiny",
+  "tone_funny",
+  "tone_crazy",
+  "tone_romantic",
 ];
 const objectifs = [
-  "Sexualisation",
-  "Engagement",
-  "KYC",
-  "Vente de média",
-  "Demande de tips",
-  "Vente complémentaire",
-  "Réactivation",
-  "Remerciement",
-  "Justification",
-  "Négociation",
-  "Teasing",
-  "Conversion"
+  "objective_sexualization",
+  "objective_engagement",
+  "objective_kyc",
+  "objective_media_sale",
+  "objective_tips_request",
+  "objective_upsell",
+  "objective_reactivation",
+  "objective_thanks",
+  "objective_justification",
+  "objective_negotiation",
+  "objective_teasing",
+  "objective_conversion"
 ];
 
 export default function TextGenerator({ setCreditsLeft }) {
@@ -56,7 +56,7 @@ export default function TextGenerator({ setCreditsLeft }) {
   ]);
   const [tone, setTone] = useState(tones[0]);
   const [objectif, setObjectif] = useState(objectifs[0]);
-  const [count, setCount] = useState(3);
+  const [count, setCount] = useState(2);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
@@ -79,7 +79,13 @@ export default function TextGenerator({ setCreditsLeft }) {
     setResults([]);
   };
 
+  const [notify, setNotify] = useState("");
   const generateResponses = async () => {
+    if (exchanges.every(ex => !ex.fan.trim())) {
+      setNotify(t("textgen_notify_fill_fan", language));
+      setTimeout(() => setNotify(""), 2500);
+      return;
+    }
     setIsLoading(true);
     setCopiedIdx(null);
     // Ajoute l'instruction contextuelle selon l'objectif et le ton
@@ -88,7 +94,7 @@ export default function TextGenerator({ setCreditsLeft }) {
     // Combine instructions personnalisées, objectif et ton
     const fullInstructions = [contextualObjective, contextualTone, instructions].filter(Boolean).join("\n");
     try {
-      const response = await generateTextWithProvider({ exchanges, tone, objectif, count, instructions: fullInstructions });
+      const response = await generateTextWithProvider({ exchanges, tone, objectif, count, instructions: fullInstructions, language });
       setResults(response.results);
       if (typeof response.creditsLeft === "number") {
         setCreditsLeftState(response.creditsLeft);
@@ -99,7 +105,6 @@ export default function TextGenerator({ setCreditsLeft }) {
     }
     setIsLoading(false);
     setInstructions(""); // Reset après envoi
-
   };
 
   return (
@@ -131,24 +136,27 @@ export default function TextGenerator({ setCreditsLeft }) {
           <textarea className="w-full p-3 rounded bg-[#232346] text-gray-200 text-sm md:text-base" rows={2} value={ex.fan} onChange={e => handleExchangeChange(idx, "fan", e.target.value)} placeholder={t("textgen_fan_placeholder", language)} />
         </div>
       ))}
+      <button className="mb-4 px-4 py-2 rounded bg-blue-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-blue-600 transition text-sm md:text-base" onClick={() => setExchanges([...exchanges, { fan: "", model: "" }])}>
+        {t("textgen_add_exchange_btn", language)}
+      </button>
       <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sm:items-end flex-wrap">
         <div className="w-full sm:w-auto">
           <label className="block text-gray-300 mb-2 text-sm md:text-base">{t("textgen_tone_label", language)}</label>
           <select className="w-full sm:w-auto p-2 rounded bg-[#232346] text-gray-200 text-sm md:text-base" value={tone} onChange={e => setTone(e.target.value)}>
-            {tones.map(toneVal => <option key={toneVal}>{t(toneVal, language)}</option>)}
+            {tones.map(toneVal => <option key={toneVal} value={toneVal}>{t(toneVal, language)}</option>)}
           </select>
         </div>
         <div className="w-full sm:w-auto">
           <label className="block text-gray-300 mb-2 text-sm md:text-base">{t("textgen_objective_label", language)}</label>
           <select className="w-full sm:w-auto p-2 rounded bg-[#232346] text-gray-200 text-sm md:text-base" value={objectif} onChange={e => setObjectif(e.target.value)}>
-            {objectifs.map(objVal => <option key={objVal}>{t(objVal, language)}</option>)}
+            {objectifs.map(objVal => <option key={objVal} value={objVal}>{t(objVal, language)}</option>)}
           </select>
         </div>
         <div className="flex flex-col w-full sm:w-auto">
           <label className="block text-gray-300 mb-2 text-sm md:text-base">{t("textgen_count_label", language)}</label>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <input type="range" min={1} max={5} value={count} onChange={e => setCount(Number(e.target.value))} className="w-24 sm:w-32" />
+              <input type="range" min={1} max={4} value={count} onChange={e => setCount(Number(e.target.value))} className="w-24 sm:w-32" />
               <span className="text-blue-400 font-bold text-sm md:text-base">{count}</span>
             </div>
             <button
@@ -173,6 +181,12 @@ export default function TextGenerator({ setCreditsLeft }) {
                />
              </div>
       )}
+      {notify && (
+        <div className="mb-2 px-4 py-2 rounded bg-blue-100 text-blue-800 text-center font-medium flex items-center justify-center gap-2 shadow animate-fade-in">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-8 4a1 1 0 100-2 1 1 0 000 2zm-1-7a1 1 0 012 0v3a1 1 0 01-2 0V7z" clipRule="evenodd" /></svg>
+          {notify === "textgen_notify_fill_fan" ? t("textgen_notify_fill_fan", language) : notify}
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         {(!canGenerate || creditsLeftState === 0) ? (
           <button className="w-full px-4 py-2 rounded bg-yellow-500 text-white font-bold neon-glow shadow-blue-glow hover:bg-yellow-600 transition text-sm md:text-base" onClick={() => window.location.href = "/pricing"} disabled={isLoading || loading}>
@@ -192,7 +206,7 @@ export default function TextGenerator({ setCreditsLeft }) {
             {results.map((r, idx) => (
               <div key={r.variant} className="bg-[#232346] rounded-lg p-4 shadow-blue-glow text-gray-200 flex flex-col gap-2">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <span className="font-bold text-blue-400 text-sm md:text-base">{t("textgen_variant_label", language, { variant: r.variant })}</span>
+                  <span className="font-bold text-blue-400 text-sm md:text-base">{t("textgen_variant_label", language, { variant: String(r.variant) })}</span>
                   <button
                     className={`text-xs px-3 py-1 rounded font-bold transition ${copiedIdx === idx ? "bg-blue-500 text-white neon-glow" : "bg-[#181828] text-blue-400 hover:bg-blue-500 hover:text-white"}`}
                     onClick={() => {
