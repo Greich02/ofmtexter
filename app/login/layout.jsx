@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Connexion - OfmPilot',
-  description: 'Connectez-vous à votre compte OfmPilot pour accéder à vos outils de génération de textes et scripts IA.',
-  keywords: 'connexion, login, compte OfmPilot, authentification',
+  title: 'Login - OfmPilot',
+  description: 'Log in to your OfmPilot account to access your AI text and script generation tools.',
+  keywords: 'login, OfmPilot account, authentication',
   openGraph: {
-    title: 'Connexion - OfmPilot',
-    description: 'Accédez à votre espace personnel OfmPilot',
+    title: 'Login - OfmPilot',
+    description: 'Access your personal OfmPilot space',
     type: 'website',
   },
 }

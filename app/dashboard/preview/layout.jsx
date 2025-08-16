@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Prévisualisation - OfmPilot',
-  description: 'Prévisualisez vos générations de textes et scripts avant de les utiliser. Testez et ajustez votre contenu IA.',
-  keywords: 'prévisualisation, aperçu, test, contenu IA, OfmPilot',
+  title: 'Preview - OfmPilot',
+  description: 'Preview your generated texts and scripts before using them. Test and adjust your AI content.',
+  keywords: 'preview, test, AI content, OfmPilot',
   openGraph: {
-    title: 'Prévisualisation - OfmPilot',
-    description: 'Prévisualisez votre contenu généré',
+    title: 'Preview - OfmPilot',
+    description: 'Preview your generated content',
     type: 'website',
   },
 }

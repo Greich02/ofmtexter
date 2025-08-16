@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Inscription - OfmPilot',
-  description: 'Créez votre compte OfmPilot et commencez à générer des textes et scripts IA dès aujourd\'hui.',
-  keywords: 'inscription, signup, créer compte, OfmPilot, générateur IA',
+  title: 'Sign Up - OfmPilot',
+  description: 'Create your OfmPilot account and start generating AI texts and scripts today.',
+  keywords: 'sign up, create account, OfmPilot, AI generator',
   openGraph: {
-    title: 'Inscription - OfmPilot',
-    description: 'Rejoignez OfmPilot et révolutionnez votre création de contenu',
+    title: 'Sign Up - OfmPilot',
+    description: 'Join OfmPilot and revolutionize your content creation',
     type: 'website',
   },
 }

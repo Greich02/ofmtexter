@@ -56,7 +56,7 @@ export default function TextGenerator({ setCreditsLeft }) {
   ]);
   const [tone, setTone] = useState(tones[0]);
   const [objectif, setObjectif] = useState(objectifs[0]);
-  const [count, setCount] = useState(2);
+  const [count, setCount] = useState(1);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);

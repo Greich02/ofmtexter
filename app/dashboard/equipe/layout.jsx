@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Gestion d\'Équipe - OfmPilot',
-  description: 'Gérez votre équipe OfmPilot, invitez des membres et supervisez leurs activités de génération de contenu IA.',
-  keywords: 'gestion équipe, collaboration, membres, supervision, OfmPilot, travail d\'équipe',
+  title: 'Team Management - OfmPilot',
+  description: 'Manage your team of chatters and track their performance.',
+  keywords: 'team management, chatters, OfmPilot',
   openGraph: {
-    title: 'Gestion d\'Équipe - OfmPilot',
-    description: 'Collaborez avec votre équipe sur OfmPilot',
+    title: 'Team Management - OfmPilot',
+    description: 'Manage your team with OfmPilot',
     type: 'website',
   },
 }

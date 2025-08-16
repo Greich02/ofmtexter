@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Générateur de Textes - OfmPilot',
-  description: 'Générez des textes optimisés pour WhatsApp, Telegram et réseaux sociaux avec notre IA avancée. Créez du contenu engageant en quelques clics.',
-  keywords: 'générateur de textes, IA, WhatsApp, Telegram, réseaux sociaux, contenu automatique',
+  title: 'Text Generator - OfmPilot',
+  description: 'Generate optimized texts for WhatsApp, Telegram, and social networks with our advanced AI. Create engaging content in just a few clicks.',
+  keywords: 'text generator, AI, WhatsApp, Telegram, social networks, automated content',
   openGraph: {
-    title: 'Générateur de Textes - OfmPilot',
-    description: 'Créez des textes engageants avec l\'IA',
+    title: 'Text Generator - OfmPilot',
+    description: 'Create engaging texts with AI',
     type: 'website',
   },
 }

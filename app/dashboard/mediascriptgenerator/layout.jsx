@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Générateur de Scripts Média - OfmPilot',
-  description: 'Générez des scripts optimisés pour les médias sociaux, YouTube, TikTok et autres plateformes vidéo avec notre IA spécialisée.',
-  keywords: 'scripts média, YouTube, TikTok, Instagram, réseaux sociaux, contenu vidéo, IA',
+  title: 'Media Script Generator - OfmPilot',
+  description: 'Generate optimized scripts for social media, YouTube, TikTok, and other video platforms with our specialized AI.',
+  keywords: 'media scripts, YouTube, TikTok, Instagram, social networks, video content, AI',
   openGraph: {
-    title: 'Générateur de Scripts Média - OfmPilot',
-    description: 'Créez des scripts pour vos médias sociaux',
+    title: 'Media Script Generator - OfmPilot',
+    description: 'Create scripts for your social media',
     type: 'website',
   },
 }

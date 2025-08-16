@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Tarifs et Plans - OfmPilot',
-  description: 'Découvrez nos plans tarifaires adaptés à vos besoins. Choisissez le plan qui vous convient pour générer des textes et scripts IA.',
-  keywords: 'tarifs, prix, plans, abonnement, OfmPilot, générateur IA',
+  title: 'Pricing & Plans - OfmPilot',
+  description: 'Discover our pricing plans tailored to your needs. Choose the plan that fits you to generate AI texts and scripts.',
+  keywords: 'pricing, plans, subscription, OfmPilot, AI generator',
   openGraph: {
-    title: 'Tarifs et Plans - OfmPilot',
-    description: 'Choisissez le plan qui vous convient',
+    title: 'Pricing & Plans - OfmPilot',
+    description: 'Choose the plan that fits you',
     type: 'website',
   },
 }

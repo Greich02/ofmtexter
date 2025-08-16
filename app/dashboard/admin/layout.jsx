@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Administration - OfmPilot',
-  description: 'Panneau d\'administration OfmPilot pour la gestion des utilisateurs, des plans et des paramètres système.',
-  keywords: 'administration, gestion, paramètres, OfmPilot, admin',
+  title: 'Admin - OfmPilot',
+  description: 'Access your account administration and manage advanced settings.',
+  keywords: 'admin, administration, settings, OfmPilot',
   openGraph: {
-    title: 'Administration - OfmPilot',
-    description: 'Panneau d\'administration OfmPilot',
+    title: 'Admin - OfmPilot',
+    description: 'Manage your account advanced settings',
     type: 'website',
   },
 }

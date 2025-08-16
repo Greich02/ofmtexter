@@ -1,10 +1,10 @@
 export const metadata = {
-  title: 'Générateur de Scripts - OfmPilot',
-  description: 'Créez des scripts professionnels pour vos vidéos, podcasts et présentations avec notre IA. Générez des scripts engageants et structurés.',
-  keywords: 'générateur de scripts, IA, vidéos, podcasts, présentations, contenu vidéo',
+  title: 'Script Generator - OfmPilot',
+  description: 'Create professional scripts for your videos, podcasts, and presentations with our AI. Generate engaging and structured scripts.',
+  keywords: 'script generator, AI, videos, podcasts, presentations, video content',
   openGraph: {
-    title: 'Générateur de Scripts - OfmPilot',
-    description: 'Créez des scripts professionnels avec l\'IA',
+    title: 'Script Generator - OfmPilot',
+    description: 'Create professional scripts with AI',
     type: 'website',
   },
 }

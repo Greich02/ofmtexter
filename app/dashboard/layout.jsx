@@ -1,10 +1,10 @@
 export const metadata = {
   title: 'Dashboard - OfmPilot',
-  description: 'Accédez à votre tableau de bord OfmPilot pour gérer vos générations de textes, scripts et contenus IA.',
-  keywords: 'dashboard, tableau de bord, gestion, OfmPilot, générateur IA',
+  description: 'Access your OfmPilot dashboard to manage your AI text, script, and content generations.',
+  keywords: 'dashboard, management, OfmPilot, AI generator',
   openGraph: {
     title: 'Dashboard - OfmPilot',
-    description: 'Gérez vos générations de contenu IA',
+    description: 'Manage your AI content generations',
     type: 'website',
   },
 }

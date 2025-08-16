@@ -3,18 +3,18 @@ import { useLanguage } from "../contexts/LanguageContext.jsx";
 import { t } from "../lib/i18n";
 
 const allFeatures = [
-  "Générations incluses/mois",
-  "Génération de réponses rapides",
-  "Conversations suivies",
-  "Scripts médias",
-  "Gestion d'équipe",
+  "Generations included/month",
+  "Fast response generation",
+  "Followed conversations",
+  "Media scripts",
+  "Team management",
 ];
 
 const planFeatures = {
-  "Gratuit": ["~50", "Oui", "Oui", "Oui", "Non"],
-  "Solo": ["~500", "Oui", "Oui", "Non", "Non"],
-  "Pro": ["~1200", "Oui", "Oui", "Oui", "Non"],
-  "Agence": ["~3500", "Oui", "Oui", "Oui", "Oui"],
+  "Free": ["~50", "Yes", "Yes", "Yes", "No"],
+  "Solo": ["~500", "Yes", "Yes", "No", "No"],
+  "Pro": ["~1200", "Yes", "Yes", "Yes", "No"],
+  "Agency": ["~3500", "Yes", "Yes", "Yes", "Yes"],
 };
 
 export default function Pricing({ isLoggedIn }) {
